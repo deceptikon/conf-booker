@@ -1,0 +1,16 @@
+schema {
+    query: Query
+}
+
+type Query {
+    User(id: Int): User!
+}
+
+type User {
+    name: String
+}
+
+input HelloInput {
+    firstName: String!
+    lastName: String
+}
