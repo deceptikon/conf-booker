@@ -62,28 +62,33 @@ function getSchema() {
         }
 
         if ($isMutation) {
-          $obj = new $className();
+          if (isset($args['id'])) {
+            $className .= 'Query';
+            $obj = $className::create()->findOneById($args['id']);
+          } else {
+            $obj = new $className();
+          }
           foreach($args['data'] as $field => $value){
             $fld = set($field);
             $obj->$fld($value);
           }
           $obj->save();
           return $obj;
-          $res = $obj;
         }
           
         if ($isQuery) {
           $className .= 'Query';
           $obj = new $className();
           $res = $obj->find();
+          return $res;
         }
-        //return $res;
 
         if ($isObject) {
           return $res;
         } else if ($isField) {
           $field = get($resolverName);
-          return  $res->$field();
+          $q = is_null($res) ? $value : $res;
+          return  $q->$field();
         }
       };
       return $typeConfig;
