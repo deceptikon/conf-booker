@@ -17,4 +17,5 @@ use ConfBooker\Base\User as BaseUser;
 class User extends BaseUser
 {
   public $name = "yuyu";
+  public $phone = '000000';
 }

@@ -1,13 +1,26 @@
 schema {
     query: Query
+    mutation: Mutation
 }
 
 type Query {
     User(id: Int): User!
 }
 
+type Mutation {
+    User(id: Int, data: UserInput): User
+}
+
 type User {
     name: String
+    email: String
+    phone: String
+}
+
+type UserInput {
+    name: String
+    email: String
+    phone: string
 }
 
 input HelloInput {
