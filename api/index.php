@@ -5,6 +5,9 @@
 $loader = require 'vendor/autoload.php';
 $loader->add('ConfBooker', __DIR__.'./src/ConfBooker');
 
+// setup Propel
+require_once 'generated-conf/config.php';
+
 use GraphQL\GraphQL;
 use GraphQL\Language\Parser;
 use GraphQL\Utils\BuildSchema;
@@ -13,6 +16,10 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 
 define("DEBUG", true);
+
+function get($str) {
+  return "get".ucfirst($str);
+}
 
 function getSchema() {
   $cacheFilename = 'cached_schema.php';
@@ -43,12 +50,15 @@ function getSchema() {
           print($resolverName.'-'.$parentName.":WTF??\n");
         }
           
+        $className .= 'Query';
         $obj = new $className();
+        $res = $obj->find();
 
         if ($isObject) {
-          return $obj;
+          return $res;
         } else if ($isField) {
-          return  $obj->$resolverName;
+          $field = get($resolverName);
+          return  $res->$field();
         }
       };
       return $typeConfig;

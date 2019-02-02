@@ -39,7 +39,7 @@ class UserFilesTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'default';
+    const DATABASE_NAME = 'conf_booker_db';
 
     /**
      * The table name for this class

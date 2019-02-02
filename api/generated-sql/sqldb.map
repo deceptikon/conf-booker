@@ -1,2 +1,2 @@
 # Sqlfile -> Database map
-default.sql=default
+conf_booker_db.sql=conf_booker_db
