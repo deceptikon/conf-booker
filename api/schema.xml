@@ -22,6 +22,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd"
           namespace="ConfBooker"
+          identifierQuoting="true"
         >
     <!-- Within the <database> tag, Propel expects one <table> tag for each table -->
 
@@ -54,11 +55,11 @@
             what their names imply.
         -->
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="name" type="varchar" size="255" required="true"/>
-        <column name="position" type="varchar" size="24" required="true"/>
+        <column name="fullname" type="varchar" size="255" required="true"/>
+        <column name="position" type="varchar" size="24" required="false"/>
         <column name="email" type="varchar" size="24" required="true" />
         <column name="phone" type="varchar" size="24" required="true" />
-        <column name="job_place" type="integer" required="true"/>
+        <column name="job_place" type="integer" required="false"/>
 
         <!--
             A foreign key represents a relationship. Just like a table or a column, a relationship has a `phpName`.

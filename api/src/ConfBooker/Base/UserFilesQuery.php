@@ -164,7 +164,7 @@ abstract class UserFilesQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT user_id, name, filename FROM user_files WHERE user_id = :p0';
+        $sql = 'SELECT `user_id`, `name`, `filename` FROM `user_files` WHERE `user_id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);

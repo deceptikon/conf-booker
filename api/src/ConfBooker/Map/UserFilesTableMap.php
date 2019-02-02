@@ -131,7 +131,7 @@ class UserFilesTableMap extends TableMap
         // attributes
         $this->setName('user_files');
         $this->setPhpName('UserFiles');
-        $this->setIdentifierQuoting(false);
+        $this->setIdentifierQuoting(true);
         $this->setClassName('\\ConfBooker\\UserFiles');
         $this->setPackage('ConfBooker');
         $this->setUseIdGenerator(false);

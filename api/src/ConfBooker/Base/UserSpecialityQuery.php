@@ -169,7 +169,7 @@ abstract class UserSpecialityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT user_id, spec_id FROM user_speciality WHERE user_id = :p0 AND spec_id = :p1';
+        $sql = 'SELECT `user_id`, `spec_id` FROM `user_speciality` WHERE `user_id` = :p0 AND `spec_id` = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);

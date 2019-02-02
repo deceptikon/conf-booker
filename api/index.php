@@ -21,6 +21,10 @@ function get($str) {
   return "get".ucfirst($str);
 }
 
+function set($str) {
+  return "set".ucfirst($str);
+}
+
 function getSchema() {
   $cacheFilename = 'cached_schema.php';
 
@@ -32,6 +36,7 @@ function getSchema() {
         $parentName = $info->parentType->name;
         $resolverName = $info->fieldName;
         $isMutation = $parentName === 'Mutation';
+        $isQuery = $parentName === 'Query';
         $className = null;
         $isObject = false;
         $isField = false;
@@ -49,10 +54,24 @@ function getSchema() {
         } else {
           print($resolverName.'-'.$parentName.":WTF??\n");
         }
+
+        if ($isMutation) {
+          $obj = new $className();
+          foreach($args['data'] as $field => $value){
+            $fld = set($field);
+            $obj->$fld($value);
+          }
+          $obj->save();
+          return $obj;
+          $res = $obj;
+        }
           
-        $className .= 'Query';
-        $obj = new $className();
-        $res = $obj->find();
+        if ($isQuery) {
+          $className .= 'Query';
+          $obj = new $className();
+          $res = $obj->find();
+        }
+        //return $res;
 
         if ($isObject) {
           return $res;

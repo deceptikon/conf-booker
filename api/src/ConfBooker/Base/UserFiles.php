@@ -680,17 +680,17 @@ abstract class UserFiles implements ActiveRecordInterface
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(UserFilesTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_id';
+            $modifiedColumns[':p' . $index++]  = '`user_id`';
         }
         if ($this->isColumnModified(UserFilesTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'name';
+            $modifiedColumns[':p' . $index++]  = '`name`';
         }
         if ($this->isColumnModified(UserFilesTableMap::COL_FILENAME)) {
-            $modifiedColumns[':p' . $index++]  = 'filename';
+            $modifiedColumns[':p' . $index++]  = '`filename`';
         }
 
         $sql = sprintf(
-            'INSERT INTO user_files (%s) VALUES (%s)',
+            'INSERT INTO `user_files` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -699,13 +699,13 @@ abstract class UserFiles implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'user_id':
+                    case '`user_id`':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'name':
+                    case '`name`':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'filename':
+                    case '`filename`':
                         $stmt->bindValue($identifier, $this->filename, PDO::PARAM_STR);
                         break;
                 }

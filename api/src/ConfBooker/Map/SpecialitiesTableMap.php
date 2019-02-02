@@ -126,7 +126,7 @@ class SpecialitiesTableMap extends TableMap
         // attributes
         $this->setName('specialities');
         $this->setPhpName('Specialities');
-        $this->setIdentifierQuoting(false);
+        $this->setIdentifierQuoting(true);
         $this->setClassName('\\ConfBooker\\Specialities');
         $this->setPackage('ConfBooker');
         $this->setUseIdGenerator(true);

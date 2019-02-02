@@ -662,14 +662,14 @@ abstract class UserSpeciality implements ActiveRecordInterface
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(UserSpecialityTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_id';
+            $modifiedColumns[':p' . $index++]  = '`user_id`';
         }
         if ($this->isColumnModified(UserSpecialityTableMap::COL_SPEC_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'spec_id';
+            $modifiedColumns[':p' . $index++]  = '`spec_id`';
         }
 
         $sql = sprintf(
-            'INSERT INTO user_speciality (%s) VALUES (%s)',
+            'INSERT INTO `user_speciality` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -678,10 +678,10 @@ abstract class UserSpeciality implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'user_id':
+                    case '`user_id`':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'spec_id':
+                    case '`spec_id`':
                         $stmt->bindValue($identifier, $this->spec_id, PDO::PARAM_INT);
                         break;
                 }

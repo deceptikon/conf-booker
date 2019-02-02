@@ -8,19 +8,19 @@ type Query {
 }
 
 type Mutation {
-    User(id: Int, data: UserInput): User
+    User(id: Int, data: UserInput!): User
 }
 
 type User {
-    name: String
+    fullname: String
     email: String
     phone: String
 }
 
-type UserInput {
-    name: String
+input UserInput {
+    fullname: String
     email: String
-    phone: string
+    phone: String
 }
 
 input HelloInput {

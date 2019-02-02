@@ -77,9 +77,9 @@ class UserTableMap extends TableMap
     const COL_ID = 'users.id';
 
     /**
-     * the column name for the name field
+     * the column name for the fullname field
      */
-    const COL_NAME = 'users.name';
+    const COL_FULLNAME = 'users.fullname';
 
     /**
      * the column name for the position field
@@ -113,10 +113,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Position', 'Email', 'Phone', 'JobPlace', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'position', 'email', 'phone', 'jobPlace', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_NAME, UserTableMap::COL_POSITION, UserTableMap::COL_EMAIL, UserTableMap::COL_PHONE, UserTableMap::COL_JOB_PLACE, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'position', 'email', 'phone', 'job_place', ),
+        self::TYPE_PHPNAME       => array('Id', 'Fullname', 'Position', 'Email', 'Phone', 'JobPlace', ),
+        self::TYPE_CAMELNAME     => array('id', 'fullname', 'position', 'email', 'phone', 'jobPlace', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_FULLNAME, UserTableMap::COL_POSITION, UserTableMap::COL_EMAIL, UserTableMap::COL_PHONE, UserTableMap::COL_JOB_PLACE, ),
+        self::TYPE_FIELDNAME     => array('id', 'fullname', 'position', 'email', 'phone', 'job_place', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
@@ -127,10 +127,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Position' => 2, 'Email' => 3, 'Phone' => 4, 'JobPlace' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'position' => 2, 'email' => 3, 'phone' => 4, 'jobPlace' => 5, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_NAME => 1, UserTableMap::COL_POSITION => 2, UserTableMap::COL_EMAIL => 3, UserTableMap::COL_PHONE => 4, UserTableMap::COL_JOB_PLACE => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'position' => 2, 'email' => 3, 'phone' => 4, 'job_place' => 5, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Fullname' => 1, 'Position' => 2, 'Email' => 3, 'Phone' => 4, 'JobPlace' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'fullname' => 1, 'position' => 2, 'email' => 3, 'phone' => 4, 'jobPlace' => 5, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_FULLNAME => 1, UserTableMap::COL_POSITION => 2, UserTableMap::COL_EMAIL => 3, UserTableMap::COL_PHONE => 4, UserTableMap::COL_JOB_PLACE => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'fullname' => 1, 'position' => 2, 'email' => 3, 'phone' => 4, 'job_place' => 5, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
@@ -146,17 +146,17 @@ class UserTableMap extends TableMap
         // attributes
         $this->setName('users');
         $this->setPhpName('User');
-        $this->setIdentifierQuoting(false);
+        $this->setIdentifierQuoting(true);
         $this->setClassName('\\ConfBooker\\User');
         $this->setPackage('ConfBooker');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
-        $this->addColumn('position', 'Position', 'VARCHAR', true, 24, null);
+        $this->addColumn('fullname', 'Fullname', 'VARCHAR', true, 255, null);
+        $this->addColumn('position', 'Position', 'VARCHAR', false, 24, null);
         $this->addColumn('email', 'Email', 'VARCHAR', true, 24, null);
         $this->addColumn('phone', 'Phone', 'VARCHAR', true, 24, null);
-        $this->addColumn('job_place', 'JobPlace', 'INTEGER', true, null, null);
+        $this->addColumn('job_place', 'JobPlace', 'INTEGER', false, null, null);
     } // initialize()
 
     /**
@@ -323,14 +323,14 @@ class UserTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_NAME);
+            $criteria->addSelectColumn(UserTableMap::COL_FULLNAME);
             $criteria->addSelectColumn(UserTableMap::COL_POSITION);
             $criteria->addSelectColumn(UserTableMap::COL_EMAIL);
             $criteria->addSelectColumn(UserTableMap::COL_PHONE);
             $criteria->addSelectColumn(UserTableMap::COL_JOB_PLACE);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.fullname');
             $criteria->addSelectColumn($alias . '.position');
             $criteria->addSelectColumn($alias . '.email');
             $criteria->addSelectColumn($alias . '.phone');

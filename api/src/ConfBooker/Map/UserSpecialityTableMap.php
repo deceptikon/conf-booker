@@ -126,7 +126,7 @@ class UserSpecialityTableMap extends TableMap
         // attributes
         $this->setName('user_speciality');
         $this->setPhpName('UserSpeciality');
-        $this->setIdentifierQuoting(false);
+        $this->setIdentifierQuoting(true);
         $this->setClassName('\\ConfBooker\\UserSpeciality');
         $this->setPackage('ConfBooker');
         $this->setUseIdGenerator(false);

@@ -75,7 +75,7 @@ abstract class SpecialitiesQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'default', $modelName = '\\ConfBooker\\Specialities', $modelAlias = null)
+    public function __construct($dbName = 'conf_booker_db', $modelName = '\\ConfBooker\\Specialities', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -159,7 +159,7 @@ abstract class SpecialitiesQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name FROM specialities WHERE id = :p0';
+        $sql = 'SELECT `id`, `name` FROM `specialities` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
