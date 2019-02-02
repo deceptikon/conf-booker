@@ -13,7 +13,13 @@ use GraphQL\Language\Parser;
 use GraphQL\Utils\BuildSchema;
 use GraphQL\Utils\AST;
 use GraphQL\Type\Definition\ResolveInfo;
+use Propel\Runtime\Propel;
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+$logger = new Logger('defaultLogger');
+$logger->pushHandler(new StreamHandler('php://stderr'));
+Propel::getServiceContainer()->setLogger('defaultLogger', $logger);
 
 define("DEBUG", true);
 

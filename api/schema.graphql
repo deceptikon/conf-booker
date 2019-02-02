@@ -15,12 +15,14 @@ type User {
     fullname: String
     email: String
     phone: String
+    position: String
 }
 
 input UserInput {
     fullname: String
     email: String
     phone: String
+    position: String
 }
 
 input HelloInput {
