@@ -17,6 +17,13 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.intro {
+  margin: 20px 30px 90px;
+}
+.intro-text {
+  text-align: left;
+  padding: 20px;
+}
 
 .App-link {
   color: #61dafb;

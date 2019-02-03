@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import BookingForm from './components/BookingForm';
-import logo from './logo.svg';
+import Registration from './components/Registration';
 import './App.css';
 
 const style = {
   margin: '0 auto',
-  maxWidth: '640px',
-  background: '#BBB',
+  maxWidth: '900px',
+  minHeight: '600px',
+  background: '#fefefe',
+  padding: '60px 10px',
 };
 
 class App extends Component {
   render() {
     return (
       <div className="App" style={style}>
-        <BookingForm />
+        <Registration />
       </div>
     );
   }
