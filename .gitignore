@@ -11,3 +11,7 @@ api/cached_schema\.php
 api/composer\.lock
 
 api/generated-conf/
+
+utils/venv/
+
+utils/db\.csv
