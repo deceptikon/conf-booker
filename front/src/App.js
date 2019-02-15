@@ -4,7 +4,7 @@ import './App.css';
 
 const style = {
   margin: '0 auto',
-  maxWidth: '900px',
+  maxWidth: '800px',
   minHeight: '600px',
   background: '#fefefe',
   padding: '60px 10px',

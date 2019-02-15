@@ -40,7 +40,7 @@ class PropelMigration_1547817970
     public function getUpSQL()
     {
         return array (
-  'default' => '
+  'conf_booker_db' => '
 # This is a fix for InnoDB in MySQL >= 4.1.x
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
@@ -103,7 +103,7 @@ SET FOREIGN_KEY_CHECKS = 1;
     public function getDownSQL()
     {
         return array (
-  'default' => '
+  'conf_booker_db' => '
 # This is a fix for InnoDB in MySQL >= 4.1.x
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
