@@ -1,5 +1,6 @@
 <?php
-
+header('Access-Control-Allow-Origin: *'); 
+header('Access-Control-Allow-Headers: origin, content-type, accept');
 // require 'vendor/autoload.php';
 
 $loader = require 'vendor/autoload.php';

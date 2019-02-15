@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
 import Registration from './components/Registration';
 import './App.css';
 
@@ -10,12 +13,36 @@ const style = {
   padding: '60px 10px',
 };
 
+const defaultOptions = {
+  fetchOptions: {
+    mode: 'no-cors',
+  },
+  watchQuery: {
+    fetchPolicy: 'cache-and-network',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  },
+  mutate: {
+    errorPolicy: 'all'
+  }
+};
+
+const client = new ApolloClient({
+  uri: "http://localhost:8000/graphql",
+  defaultOptions,
+});
+
 class App extends Component {
   render() {
     return (
-      <div className="App" style={style}>
-        <Registration />
-      </div>
+      <ApolloProvider client={client}>
+        <div className="App" style={style}>
+          <Registration />
+        </div>
+      </ApolloProvider>
     );
   }
 }
