@@ -22,17 +22,25 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildUserQuery orderByFullname($order = Criteria::ASC) Order by the fullname column
- * @method     ChildUserQuery orderByPosition($order = Criteria::ASC) Order by the position column
  * @method     ChildUserQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildUserQuery orderByPhone($order = Criteria::ASC) Order by the phone column
  * @method     ChildUserQuery orderByJobPlace($order = Criteria::ASC) Order by the job_place column
+ * @method     ChildUserQuery orderByAddress($order = Criteria::ASC) Order by the address column
+ * @method     ChildUserQuery orderByPosition($order = Criteria::ASC) Order by the position column
+ * @method     ChildUserQuery orderByDegree($order = Criteria::ASC) Order by the degree column
+ * @method     ChildUserQuery orderByUid($order = Criteria::ASC) Order by the uid column
+ * @method     ChildUserQuery orderByDevice($order = Criteria::ASC) Order by the device column
  *
  * @method     ChildUserQuery groupById() Group by the id column
  * @method     ChildUserQuery groupByFullname() Group by the fullname column
- * @method     ChildUserQuery groupByPosition() Group by the position column
  * @method     ChildUserQuery groupByEmail() Group by the email column
  * @method     ChildUserQuery groupByPhone() Group by the phone column
  * @method     ChildUserQuery groupByJobPlace() Group by the job_place column
+ * @method     ChildUserQuery groupByAddress() Group by the address column
+ * @method     ChildUserQuery groupByPosition() Group by the position column
+ * @method     ChildUserQuery groupByDegree() Group by the degree column
+ * @method     ChildUserQuery groupByUid() Group by the uid column
+ * @method     ChildUserQuery groupByDevice() Group by the device column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -69,28 +77,40 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
  * @method     ChildUser findOneByFullname(string $fullname) Return the first ChildUser filtered by the fullname column
- * @method     ChildUser findOneByPosition(string $position) Return the first ChildUser filtered by the position column
  * @method     ChildUser findOneByEmail(string $email) Return the first ChildUser filtered by the email column
  * @method     ChildUser findOneByPhone(string $phone) Return the first ChildUser filtered by the phone column
- * @method     ChildUser findOneByJobPlace(int $job_place) Return the first ChildUser filtered by the job_place column *
+ * @method     ChildUser findOneByJobPlace(string $job_place) Return the first ChildUser filtered by the job_place column
+ * @method     ChildUser findOneByAddress(string $address) Return the first ChildUser filtered by the address column
+ * @method     ChildUser findOneByPosition(string $position) Return the first ChildUser filtered by the position column
+ * @method     ChildUser findOneByDegree(string $degree) Return the first ChildUser filtered by the degree column
+ * @method     ChildUser findOneByUid(int $uid) Return the first ChildUser filtered by the uid column
+ * @method     ChildUser findOneByDevice(string $device) Return the first ChildUser filtered by the device column *
 
  * @method     ChildUser requirePk($key, ConnectionInterface $con = null) Return the ChildUser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser requireOneById(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByFullname(string $fullname) Return the first ChildUser filtered by the fullname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByPosition(string $position) Return the first ChildUser filtered by the position column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmail(string $email) Return the first ChildUser filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByPhone(string $phone) Return the first ChildUser filtered by the phone column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByJobPlace(int $job_place) Return the first ChildUser filtered by the job_place column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByJobPlace(string $job_place) Return the first ChildUser filtered by the job_place column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByAddress(string $address) Return the first ChildUser filtered by the address column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByPosition(string $position) Return the first ChildUser filtered by the position column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByDegree(string $degree) Return the first ChildUser filtered by the degree column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByUid(int $uid) Return the first ChildUser filtered by the uid column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByDevice(string $device) Return the first ChildUser filtered by the device column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
  * @method     ChildUser[]|ObjectCollection findByFullname(string $fullname) Return ChildUser objects filtered by the fullname column
- * @method     ChildUser[]|ObjectCollection findByPosition(string $position) Return ChildUser objects filtered by the position column
  * @method     ChildUser[]|ObjectCollection findByEmail(string $email) Return ChildUser objects filtered by the email column
  * @method     ChildUser[]|ObjectCollection findByPhone(string $phone) Return ChildUser objects filtered by the phone column
- * @method     ChildUser[]|ObjectCollection findByJobPlace(int $job_place) Return ChildUser objects filtered by the job_place column
+ * @method     ChildUser[]|ObjectCollection findByJobPlace(string $job_place) Return ChildUser objects filtered by the job_place column
+ * @method     ChildUser[]|ObjectCollection findByAddress(string $address) Return ChildUser objects filtered by the address column
+ * @method     ChildUser[]|ObjectCollection findByPosition(string $position) Return ChildUser objects filtered by the position column
+ * @method     ChildUser[]|ObjectCollection findByDegree(string $degree) Return ChildUser objects filtered by the degree column
+ * @method     ChildUser[]|ObjectCollection findByUid(int $uid) Return ChildUser objects filtered by the uid column
+ * @method     ChildUser[]|ObjectCollection findByDevice(string $device) Return ChildUser objects filtered by the device column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -189,7 +209,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `fullname`, `position`, `email`, `phone`, `job_place` FROM `users` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `fullname`, `email`, `phone`, `job_place`, `address`, `position`, `degree`, `uid`, `device` FROM `users` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -346,31 +366,6 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the position column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByPosition('fooValue');   // WHERE position = 'fooValue'
-     * $query->filterByPosition('%fooValue%', Criteria::LIKE); // WHERE position LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $position The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildUserQuery The current query, for fluid interface
-     */
-    public function filterByPosition($position = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($position)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(UserTableMap::COL_POSITION, $position, $comparison);
-    }
-
-    /**
      * Filter the query on the email column
      *
      * Example usage:
@@ -425,12 +420,112 @@ abstract class UserQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByJobPlace(1234); // WHERE job_place = 1234
-     * $query->filterByJobPlace(array(12, 34)); // WHERE job_place IN (12, 34)
-     * $query->filterByJobPlace(array('min' => 12)); // WHERE job_place > 12
+     * $query->filterByJobPlace('fooValue');   // WHERE job_place = 'fooValue'
+     * $query->filterByJobPlace('%fooValue%', Criteria::LIKE); // WHERE job_place LIKE '%fooValue%'
      * </code>
      *
-     * @param     mixed $jobPlace The value to use as filter.
+     * @param     string $jobPlace The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByJobPlace($jobPlace = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($jobPlace)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_JOB_PLACE, $jobPlace, $comparison);
+    }
+
+    /**
+     * Filter the query on the address column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAddress('fooValue');   // WHERE address = 'fooValue'
+     * $query->filterByAddress('%fooValue%', Criteria::LIKE); // WHERE address LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $address The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByAddress($address = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($address)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_ADDRESS, $address, $comparison);
+    }
+
+    /**
+     * Filter the query on the position column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPosition('fooValue');   // WHERE position = 'fooValue'
+     * $query->filterByPosition('%fooValue%', Criteria::LIKE); // WHERE position LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $position The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByPosition($position = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($position)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_POSITION, $position, $comparison);
+    }
+
+    /**
+     * Filter the query on the degree column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDegree('fooValue');   // WHERE degree = 'fooValue'
+     * $query->filterByDegree('%fooValue%', Criteria::LIKE); // WHERE degree LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $degree The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByDegree($degree = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($degree)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_DEGREE, $degree, $comparison);
+    }
+
+    /**
+     * Filter the query on the uid column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUid(1234); // WHERE uid = 1234
+     * $query->filterByUid(array(12, 34)); // WHERE uid IN (12, 34)
+     * $query->filterByUid(array('min' => 12)); // WHERE uid > 12
+     * </code>
+     *
+     * @param     mixed $uid The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -438,16 +533,16 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByJobPlace($jobPlace = null, $comparison = null)
+    public function filterByUid($uid = null, $comparison = null)
     {
-        if (is_array($jobPlace)) {
+        if (is_array($uid)) {
             $useMinMax = false;
-            if (isset($jobPlace['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_JOB_PLACE, $jobPlace['min'], Criteria::GREATER_EQUAL);
+            if (isset($uid['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_UID, $uid['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($jobPlace['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_JOB_PLACE, $jobPlace['max'], Criteria::LESS_EQUAL);
+            if (isset($uid['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_UID, $uid['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -458,7 +553,32 @@ abstract class UserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_JOB_PLACE, $jobPlace, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_UID, $uid, $comparison);
+    }
+
+    /**
+     * Filter the query on the device column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDevice('fooValue');   // WHERE device = 'fooValue'
+     * $query->filterByDevice('%fooValue%', Criteria::LIKE); // WHERE device LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $device The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByDevice($device = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($device)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_DEVICE, $device, $comparison);
     }
 
     /**

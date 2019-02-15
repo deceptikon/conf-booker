@@ -18,9 +18,11 @@ const PhoneInput = (props) => (
 );
 
 const saveMember = gql`
-  query saveMember {
-    User {
+  mutation saveMember($id: Int, $data: UserInput!) {
+    User (id: $id, data: $data) {
       fullname
+      email
+      phone
     }
   }
 `
@@ -28,23 +30,25 @@ const saveMember = gql`
 
 class BookingForm extends React.Component {
   state = {
-    fullname: 'alexei',
-    phone: '555993966',
-    email: 'lexx.kg@gmai..com',
-    job_place: 'Maddevs',
-    position: 'Senior web dev',
-    address: 'pravda 103a',
-    degree: 'sss',
-    device: 'Acer',
+    fullname: '',
+    phone: '',
+    email: '',
+    job_place: '',
+    position: '',
+    address: '',
+    degree: '',
+    device: '',
   };
 
   sendForm = (e, val) => {
     e.preventDefault();
-    this.props.apollo.query({
+    this.props.apollo.mutate({
       errorPolicy: "all",
-      query: saveMember,
+      mutation: saveMember,
       variables: {
-        ...this.state,
+        data: {
+          ...this.state,
+        }
       }
     })
       .then(res => {

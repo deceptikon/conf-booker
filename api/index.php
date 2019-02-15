@@ -25,11 +25,17 @@ Propel::getServiceContainer()->setLogger('defaultLogger', $logger);
 define("DEBUG", true);
 
 function get($str) {
-  return "get".ucfirst($str);
+  $words = explode('_', $str);
+  $words = array_map('ucfirst', $words);
+  $str = implode('', $words);
+  return "get".lcfirst($str);
 }
 
 function set($str) {
-  return "set".ucfirst($str);
+  $words = explode('_', $str);
+  $words = array_map('ucfirst', $words);
+  $str = implode('', $words);
+  return "set".lcfirst($str);
 }
 
 function getSchema() {

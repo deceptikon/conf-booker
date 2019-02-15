@@ -16,6 +16,10 @@ type User {
     email: String
     phone: String
     position: String
+    address: String
+    degree: String
+    device: String
+    job_place: String
 }
 
 input UserInput {
@@ -23,9 +27,9 @@ input UserInput {
     email: String
     phone: String
     position: String
+    address: String
+    degree: String
+    device: String
+    job_place: String
 }
 
-input HelloInput {
-    firstName: String!
-    lastName: String
-}

@@ -83,13 +83,6 @@ abstract class User implements ActiveRecordInterface
     protected $fullname;
 
     /**
-     * The value for the position field.
-     *
-     * @var        string
-     */
-    protected $position;
-
-    /**
      * The value for the email field.
      *
      * @var        string
@@ -106,9 +99,44 @@ abstract class User implements ActiveRecordInterface
     /**
      * The value for the job_place field.
      *
-     * @var        int
+     * @var        string
      */
     protected $job_place;
+
+    /**
+     * The value for the address field.
+     *
+     * @var        string
+     */
+    protected $address;
+
+    /**
+     * The value for the position field.
+     *
+     * @var        string
+     */
+    protected $position;
+
+    /**
+     * The value for the degree field.
+     *
+     * @var        string
+     */
+    protected $degree;
+
+    /**
+     * The value for the uid field.
+     *
+     * @var        int
+     */
+    protected $uid;
+
+    /**
+     * The value for the device field.
+     *
+     * @var        string
+     */
+    protected $device;
 
     /**
      * @var        ObjectCollection|ChildUserSpeciality[] Collection to store aggregation of ChildUserSpeciality objects.
@@ -397,16 +425,6 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [position] column value.
-     *
-     * @return string
-     */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-
-    /**
      * Get the [email] column value.
      *
      * @return string
@@ -429,11 +447,61 @@ abstract class User implements ActiveRecordInterface
     /**
      * Get the [job_place] column value.
      *
-     * @return int
+     * @return string
      */
     public function getJobPlace()
     {
         return $this->job_place;
+    }
+
+    /**
+     * Get the [address] column value.
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Get the [position] column value.
+     *
+     * @return string
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * Get the [degree] column value.
+     *
+     * @return string
+     */
+    public function getDegree()
+    {
+        return $this->degree;
+    }
+
+    /**
+     * Get the [uid] column value.
+     *
+     * @return int
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * Get the [device] column value.
+     *
+     * @return string
+     */
+    public function getDevice()
+    {
+        return $this->device;
     }
 
     /**
@@ -475,26 +543,6 @@ abstract class User implements ActiveRecordInterface
 
         return $this;
     } // setFullname()
-
-    /**
-     * Set the value of [position] column.
-     *
-     * @param string $v new value
-     * @return $this|\ConfBooker\User The current object (for fluent API support)
-     */
-    public function setPosition($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->position !== $v) {
-            $this->position = $v;
-            $this->modifiedColumns[UserTableMap::COL_POSITION] = true;
-        }
-
-        return $this;
-    } // setPosition()
 
     /**
      * Set the value of [email] column.
@@ -539,13 +587,13 @@ abstract class User implements ActiveRecordInterface
     /**
      * Set the value of [job_place] column.
      *
-     * @param int $v new value
+     * @param string $v new value
      * @return $this|\ConfBooker\User The current object (for fluent API support)
      */
     public function setJobPlace($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
         if ($this->job_place !== $v) {
@@ -555,6 +603,106 @@ abstract class User implements ActiveRecordInterface
 
         return $this;
     } // setJobPlace()
+
+    /**
+     * Set the value of [address] column.
+     *
+     * @param string $v new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setAddress($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->address !== $v) {
+            $this->address = $v;
+            $this->modifiedColumns[UserTableMap::COL_ADDRESS] = true;
+        }
+
+        return $this;
+    } // setAddress()
+
+    /**
+     * Set the value of [position] column.
+     *
+     * @param string $v new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setPosition($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->position !== $v) {
+            $this->position = $v;
+            $this->modifiedColumns[UserTableMap::COL_POSITION] = true;
+        }
+
+        return $this;
+    } // setPosition()
+
+    /**
+     * Set the value of [degree] column.
+     *
+     * @param string $v new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setDegree($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->degree !== $v) {
+            $this->degree = $v;
+            $this->modifiedColumns[UserTableMap::COL_DEGREE] = true;
+        }
+
+        return $this;
+    } // setDegree()
+
+    /**
+     * Set the value of [uid] column.
+     *
+     * @param int $v new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setUid($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->uid !== $v) {
+            $this->uid = $v;
+            $this->modifiedColumns[UserTableMap::COL_UID] = true;
+        }
+
+        return $this;
+    } // setUid()
+
+    /**
+     * Set the value of [device] column.
+     *
+     * @param string $v new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setDevice($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->device !== $v) {
+            $this->device = $v;
+            $this->modifiedColumns[UserTableMap::COL_DEVICE] = true;
+        }
+
+        return $this;
+    } // setDevice()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -598,17 +746,29 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Fullname', TableMap::TYPE_PHPNAME, $indexType)];
             $this->fullname = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Position', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->position = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('Phone', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Phone', TableMap::TYPE_PHPNAME, $indexType)];
             $this->phone = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('JobPlace', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->job_place = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('JobPlace', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->job_place = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('Address', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->address = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('Position', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->position = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('Degree', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->degree = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('Uid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->uid = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('Device', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->device = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -617,7 +777,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\ConfBooker\\User'), 0, $e);
@@ -881,9 +1041,6 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_FULLNAME)) {
             $modifiedColumns[':p' . $index++]  = '`fullname`';
         }
-        if ($this->isColumnModified(UserTableMap::COL_POSITION)) {
-            $modifiedColumns[':p' . $index++]  = '`position`';
-        }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = '`email`';
         }
@@ -892,6 +1049,21 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_JOB_PLACE)) {
             $modifiedColumns[':p' . $index++]  = '`job_place`';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_ADDRESS)) {
+            $modifiedColumns[':p' . $index++]  = '`address`';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_POSITION)) {
+            $modifiedColumns[':p' . $index++]  = '`position`';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_DEGREE)) {
+            $modifiedColumns[':p' . $index++]  = '`degree`';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_UID)) {
+            $modifiedColumns[':p' . $index++]  = '`uid`';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_DEVICE)) {
+            $modifiedColumns[':p' . $index++]  = '`device`';
         }
 
         $sql = sprintf(
@@ -910,9 +1082,6 @@ abstract class User implements ActiveRecordInterface
                     case '`fullname`':
                         $stmt->bindValue($identifier, $this->fullname, PDO::PARAM_STR);
                         break;
-                    case '`position`':
-                        $stmt->bindValue($identifier, $this->position, PDO::PARAM_STR);
-                        break;
                     case '`email`':
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
                         break;
@@ -920,7 +1089,22 @@ abstract class User implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->phone, PDO::PARAM_STR);
                         break;
                     case '`job_place`':
-                        $stmt->bindValue($identifier, $this->job_place, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->job_place, PDO::PARAM_STR);
+                        break;
+                    case '`address`':
+                        $stmt->bindValue($identifier, $this->address, PDO::PARAM_STR);
+                        break;
+                    case '`position`':
+                        $stmt->bindValue($identifier, $this->position, PDO::PARAM_STR);
+                        break;
+                    case '`degree`':
+                        $stmt->bindValue($identifier, $this->degree, PDO::PARAM_STR);
+                        break;
+                    case '`uid`':
+                        $stmt->bindValue($identifier, $this->uid, PDO::PARAM_INT);
+                        break;
+                    case '`device`':
+                        $stmt->bindValue($identifier, $this->device, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -991,16 +1175,28 @@ abstract class User implements ActiveRecordInterface
                 return $this->getFullname();
                 break;
             case 2:
-                return $this->getPosition();
-                break;
-            case 3:
                 return $this->getEmail();
                 break;
-            case 4:
+            case 3:
                 return $this->getPhone();
                 break;
-            case 5:
+            case 4:
                 return $this->getJobPlace();
+                break;
+            case 5:
+                return $this->getAddress();
+                break;
+            case 6:
+                return $this->getPosition();
+                break;
+            case 7:
+                return $this->getDegree();
+                break;
+            case 8:
+                return $this->getUid();
+                break;
+            case 9:
+                return $this->getDevice();
                 break;
             default:
                 return null;
@@ -1034,10 +1230,14 @@ abstract class User implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getFullname(),
-            $keys[2] => $this->getPosition(),
-            $keys[3] => $this->getEmail(),
-            $keys[4] => $this->getPhone(),
-            $keys[5] => $this->getJobPlace(),
+            $keys[2] => $this->getEmail(),
+            $keys[3] => $this->getPhone(),
+            $keys[4] => $this->getJobPlace(),
+            $keys[5] => $this->getAddress(),
+            $keys[6] => $this->getPosition(),
+            $keys[7] => $this->getDegree(),
+            $keys[8] => $this->getUid(),
+            $keys[9] => $this->getDevice(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1116,16 +1316,28 @@ abstract class User implements ActiveRecordInterface
                 $this->setFullname($value);
                 break;
             case 2:
-                $this->setPosition($value);
-                break;
-            case 3:
                 $this->setEmail($value);
                 break;
-            case 4:
+            case 3:
                 $this->setPhone($value);
                 break;
-            case 5:
+            case 4:
                 $this->setJobPlace($value);
+                break;
+            case 5:
+                $this->setAddress($value);
+                break;
+            case 6:
+                $this->setPosition($value);
+                break;
+            case 7:
+                $this->setDegree($value);
+                break;
+            case 8:
+                $this->setUid($value);
+                break;
+            case 9:
+                $this->setDevice($value);
                 break;
         } // switch()
 
@@ -1160,16 +1372,28 @@ abstract class User implements ActiveRecordInterface
             $this->setFullname($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setPosition($arr[$keys[2]]);
+            $this->setEmail($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setEmail($arr[$keys[3]]);
+            $this->setPhone($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPhone($arr[$keys[4]]);
+            $this->setJobPlace($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setJobPlace($arr[$keys[5]]);
+            $this->setAddress($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setPosition($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setDegree($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setUid($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setDevice($arr[$keys[9]]);
         }
     }
 
@@ -1218,9 +1442,6 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_FULLNAME)) {
             $criteria->add(UserTableMap::COL_FULLNAME, $this->fullname);
         }
-        if ($this->isColumnModified(UserTableMap::COL_POSITION)) {
-            $criteria->add(UserTableMap::COL_POSITION, $this->position);
-        }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
             $criteria->add(UserTableMap::COL_EMAIL, $this->email);
         }
@@ -1229,6 +1450,21 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_JOB_PLACE)) {
             $criteria->add(UserTableMap::COL_JOB_PLACE, $this->job_place);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_ADDRESS)) {
+            $criteria->add(UserTableMap::COL_ADDRESS, $this->address);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_POSITION)) {
+            $criteria->add(UserTableMap::COL_POSITION, $this->position);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_DEGREE)) {
+            $criteria->add(UserTableMap::COL_DEGREE, $this->degree);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_UID)) {
+            $criteria->add(UserTableMap::COL_UID, $this->uid);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_DEVICE)) {
+            $criteria->add(UserTableMap::COL_DEVICE, $this->device);
         }
 
         return $criteria;
@@ -1317,10 +1553,14 @@ abstract class User implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setFullname($this->getFullname());
-        $copyObj->setPosition($this->getPosition());
         $copyObj->setEmail($this->getEmail());
         $copyObj->setPhone($this->getPhone());
         $copyObj->setJobPlace($this->getJobPlace());
+        $copyObj->setAddress($this->getAddress());
+        $copyObj->setPosition($this->getPosition());
+        $copyObj->setDegree($this->getDegree());
+        $copyObj->setUid($this->getUid());
+        $copyObj->setDevice($this->getDevice());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1926,10 +2166,14 @@ abstract class User implements ActiveRecordInterface
     {
         $this->id = null;
         $this->fullname = null;
-        $this->position = null;
         $this->email = null;
         $this->phone = null;
         $this->job_place = null;
+        $this->address = null;
+        $this->position = null;
+        $this->degree = null;
+        $this->uid = null;
+        $this->device = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
