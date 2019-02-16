@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-const PhoneInput = (props) => (
+export const PhoneInput = (props) => (
   <InputMask mask="0 (999) 99-99-99" maskChar="_" value={props.value} onChange={props.onChange}>
     {(inputProps) => <TextField {...inputProps} {...props} type="tel" />}
   </InputMask>
@@ -70,8 +70,8 @@ class BookingForm extends React.Component {
     return (
       <React.Fragment>
         <form onSubmit={this.sendForm}>
-          <Typography variant="h4" gutterBottom>
-            Регистрация на конференцию
+          <Typography variant="h6" color="primary" gutterBottom>
+            Заполните форму для участия в конференции
           </Typography>
           <Grid container spacing={32}>
             <Grid item xs={12} md={12}>

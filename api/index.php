@@ -72,6 +72,9 @@ function getSchema() {
           if (isset($args['id'])) {
             $className .= 'Query';
             $obj = $className::create()->findOneById($args['id']);
+          } else if (isset($args['phone'])) {
+            $className .= 'Query';
+            $obj = $className::create()->findOneByPhone($args['phone']);
           } else {
             $obj = new $className();
           }

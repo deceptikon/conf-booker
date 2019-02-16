@@ -9,8 +9,7 @@ const style = {
   margin: '0 auto',
   maxWidth: '800px',
   minHeight: '600px',
-  background: '#fefefe',
-  padding: '60px 10px',
+  padding: '30px 10px',
 };
 
 const defaultOptions = {
@@ -32,8 +31,9 @@ const defaultOptions = {
 
 const client = new ApolloClient({
   uri: "http://localhost:8000/graphql",
-  defaultOptions,
 });
+
+client.options = defaultOptions;
 
 class App extends Component {
   render() {
