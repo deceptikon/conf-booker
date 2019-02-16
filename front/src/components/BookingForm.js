@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import { formatPhone } from '../utils';
+
 export const PhoneInput = (props) => (
   <InputMask mask="0 (999) 99-99-99" maskChar="_" value={props.value} onChange={props.onChange}>
     {(inputProps) => <TextField {...inputProps} {...props} type="tel" />}
@@ -61,7 +63,11 @@ class BookingForm extends React.Component {
 
   onChange = (e) => {
     e.persist();
-    this.setState({ [e.target.name]: e.target.value });
+    if(e.target.name === 'phone') {
+      this.setState({ [e.target.name]:  formatPhone(e.target.value) });
+    } else {
+      this.setState({ [e.target.name]: e.target.value });
+    }
   }
 
   render() {
@@ -108,6 +114,9 @@ class BookingForm extends React.Component {
               />
               <Button variant="contained" type="submit" color="primary">
                 Записаться на конференцию
+              </Button> &nbsp;
+              <Button color="secondary" onClick={e => this.props.handler(false)}>
+                Отменить и назад
               </Button>
             </Grid>
           </Grid>

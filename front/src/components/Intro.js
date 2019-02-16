@@ -33,7 +33,7 @@ const Intro = ({ handler }) => {
           Первичная регистрация
         </Button> &nbsp;
         <Button variant="outlined" fullWidth color="primary" onClick={e => handler('secondary')}>
-          Я уже зарегистрирован в системе ARKR
+          Я состою в членах Ассоциации Радиологов КР
         </Button>
       </div>
     </Paper>

@@ -9,32 +9,32 @@ import { formatPhone } from '../utils';
 
 class Registration extends Component {
   state = {
-    registration: null,
+    state: 'default',
   };
 
-  setRegState = state => this.setState({ registration: state });
+  setRegState = state => this.setState({ state: state });
 
   editUser = (data) => {
     if (data) {
       console.log("edit", formatPhone(data));
     } else {
-      this.setState({ registration: 'primary' });
+      this.setState({ state: 'primary' });
     }
   }
 
   render() {
-    const { registration } = this.state;
+    const { state } = this.state;
 
-    if(registration === 'primary') {
+    if(state === 'primary') {
       return (
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
-          <BookingForm />
+          <BookingForm handler={() => this.setState({ state: 'default' })} />
         </Paper>
       );
     }
 
-    if(registration === 'secondary') {
+    if(state === 'secondary') {
       return (
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
@@ -43,9 +43,11 @@ class Registration extends Component {
       );
     }
 
-    return (
-      <Intro handler={this.setRegState} />
-    );
+    if(state === 'default') {
+      return (
+        <Intro handler={this.setRegState} />
+      );
+    }
   }
 }
 
