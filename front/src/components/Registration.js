@@ -7,6 +7,21 @@ import PhoneForm from './PhoneForm';
 import Intro, { InfoBlock } from './Intro';
 import { formatPhone } from '../utils';
 
+const findMemberByPhone = gql`
+  query findMemberByPhone($phone: String) {
+    User (phone: $phone) {
+      fullname
+      email
+      phone
+      position
+      address
+      degree
+      device
+      job_place
+    }
+  }
+`
+
 class Registration extends Component {
   state = {
     state: 'default',
@@ -17,6 +32,19 @@ class Registration extends Component {
   editUser = (data) => {
     if (data) {
       console.log("edit", formatPhone(data));
+      this.props.apollo.query({
+        errorPolicy: "all",
+        query: findMemberByPhone,
+        variables: {
+          phone: data,
+        }
+      })
+        .then(res => {
+          console.log("GOOD", res);
+        })
+        .catch(err => {
+          console.error("BAD", err);
+        });
     } else {
       this.setState({ state: 'primary' });
     }

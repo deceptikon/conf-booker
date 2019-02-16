@@ -28,14 +28,14 @@ function get($str) {
   $words = explode('_', $str);
   $words = array_map('ucfirst', $words);
   $str = implode('', $words);
-  return "get".lcfirst($str);
+  return "get".$str;
 }
 
 function set($str) {
   $words = explode('_', $str);
   $words = array_map('ucfirst', $words);
   $str = implode('', $words);
-  return "set".lcfirst($str);
+  return "set".$str;
 }
 
 function getSchema() {
@@ -87,18 +87,22 @@ function getSchema() {
         }
           
         if ($isQuery) {
-          $className .= 'Query';
-          $obj = new $className();
-          $res = $obj->find();
-          return $res;
+          if (isset($args['phone'])) {
+            $className .= 'Query';
+            $obj = new $className();
+            $res = $obj->findOneByPhone($args['phone']);
+            return $res;
+          } 
         }
 
         if ($isObject) {
           return $res;
         } else if ($isField) {
           $field = get($resolverName);
-          $q = is_null($res) ? $value : $res;
-          return  $q->$field();
+          $q = !isset($res) || is_null($res) ? $value : $res;
+          if($q) {
+            return  $q->$field();
+          }
         }
       };
       return $typeConfig;
