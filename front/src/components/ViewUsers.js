@@ -22,6 +22,7 @@ const allUsers = gql`
       degree
       device
       job_place
+      is_member
     }
   }
 `
@@ -100,6 +101,7 @@ class ViewUsers extends Component {
                 <CustomTableCell align="right">Место работы</CustomTableCell>
                 <CustomTableCell align="right">Адрес работы</CustomTableCell>
                 <CustomTableCell align="right">Аппарат</CustomTableCell>
+                <CustomTableCell align="right">Член</CustomTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -112,6 +114,7 @@ class ViewUsers extends Component {
                   <CustomTableCell align="right">{row.job_place}</CustomTableCell>
                   <CustomTableCell align="right">{row.address}</CustomTableCell>
                   <CustomTableCell align="right">{row.device}</CustomTableCell>
+                  <CustomTableCell align="right">{row.is_member ? 'ДА' : '-' }</CustomTableCell>
                 </TableRow>
               ))}
             </TableBody>
