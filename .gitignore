@@ -15,3 +15,5 @@ api/generated-conf/
 utils/venv/
 
 utils/db\.csv
+
+*.zip

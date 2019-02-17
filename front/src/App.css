@@ -38,6 +38,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', end
 .intro-text {
   text-align: left;
   padding: 20px;
+  font-size: 16px;
+  line-height: 23px;
+  font-style: italic;
+  text-align:center;
 }
 
 .App-link {

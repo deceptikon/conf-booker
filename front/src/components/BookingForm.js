@@ -106,7 +106,7 @@ class BookingForm extends React.Component {
               <PhoneInput required name="phone" label="Телефон" value={phone} onChange={this.onChange} fullWidth />
             </Grid>
             <Grid item xs={6}>
-              <TextField name="email" label="Электронная почта" value={email} onChange={this.onChange} fullWidth />
+              <TextField required type="email" name="email" label="Электронная почта" value={email} onChange={this.onChange} fullWidth />
             </Grid>
             <Grid item xs={6} md={6}>
               <TextField required name="job_place" label="Место работы" value={job_place} onChange={this.onChange} fullWidth />
@@ -115,7 +115,7 @@ class BookingForm extends React.Component {
               <TextField required name="position" label="Должность" value={position} onChange={this.onChange} fullWidth />
             </Grid>
             <Grid item xs={12} md={12}>
-              <TextField required name="address" label="Рабочий адрес" value={address} onChange={this.onChange} fullWidth />
+              <TextField required name="address" label="Адрес места работы" value={address} onChange={this.onChange} fullWidth />
             </Grid>
             <Grid item xs={4} md={4}>
               <TextField name="degree" label="Ученая степень" value={degree} onChange={this.onChange} fullWidth helperText="д.м.н., к.м.н. или др." />

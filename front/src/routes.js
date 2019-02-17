@@ -25,7 +25,7 @@ const user = {};
 
 const AppRoutes = () => {
   return (
-    <Router>
+    <Router basename="/register">
       <Switch>
         <ProtectedRoute user={user} path="/favourites/:action?" component={Registration} />
         <Route path="/" exact component={Registration} />
