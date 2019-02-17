@@ -30,8 +30,8 @@ with open('db.csv', mode='r') as infile:
         if row[5]:
             print (row)
             cur.execute(
-                  """INSERT INTO users (fullname,job_place,address,position,degree,phone,email,device,uid)
-                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                  """INSERT INTO users (fullname,job_place,address,position,degree,phone,email,device,uid, is_member)
+                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1)""",
                   row)
 
     db.commit()
