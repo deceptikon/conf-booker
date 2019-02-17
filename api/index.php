@@ -87,12 +87,18 @@ function getSchema() {
         }
           
         if ($isQuery) {
+          $className .= 'Query';
+          $res = [];
           if (isset($args['phone'])) {
-            $className .= 'Query';
             $obj = new $className();
-            $res = $obj->findOneByPhone($args['phone']);
-            return $res;
+            $res[] = $obj->findOneByPhone($args['phone']);
+          } else {
+           $obj = $className::create()->find();
+           foreach($obj as $r) {
+             $res[] = $r;
+           }
           } 
+          return $res;
         }
 
         if ($isObject) {

@@ -47,10 +47,11 @@ class Registration extends Component {
       })
         .then(res => {
           const data = {};
+          console.error(res);
           if (res.data.User) {
-            Object.keys(res.data.User)
+            Object.keys(res.data.User[0])
               .filter(key => key !== '__typename')
-              .forEach(key => data[key] = res.data.User[key]);
+              .forEach(key => data[key] = res.data.User[0][key]);
             this.setState({
               data,
               state: 'primary',
