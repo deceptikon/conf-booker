@@ -78,7 +78,7 @@ class Registration extends Component {
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
           <h3>Регистрация успешна, { successData.fullname  }  ожидаем вас на конференции!</h3>
-          <QRCode value={successData.fullname} size="256" />
+          <QRCode value={successData.fullname} size={200} />
         </Paper>
       );
     }

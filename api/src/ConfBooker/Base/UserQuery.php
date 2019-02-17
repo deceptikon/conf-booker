@@ -30,6 +30,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByDegree($order = Criteria::ASC) Order by the degree column
  * @method     ChildUserQuery orderByUid($order = Criteria::ASC) Order by the uid column
  * @method     ChildUserQuery orderByDevice($order = Criteria::ASC) Order by the device column
+ * @method     ChildUserQuery orderByIsMember($order = Criteria::ASC) Order by the is_member column
  *
  * @method     ChildUserQuery groupById() Group by the id column
  * @method     ChildUserQuery groupByFullname() Group by the fullname column
@@ -41,6 +42,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupByDegree() Group by the degree column
  * @method     ChildUserQuery groupByUid() Group by the uid column
  * @method     ChildUserQuery groupByDevice() Group by the device column
+ * @method     ChildUserQuery groupByIsMember() Group by the is_member column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -84,7 +86,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneByPosition(string $position) Return the first ChildUser filtered by the position column
  * @method     ChildUser findOneByDegree(string $degree) Return the first ChildUser filtered by the degree column
  * @method     ChildUser findOneByUid(int $uid) Return the first ChildUser filtered by the uid column
- * @method     ChildUser findOneByDevice(string $device) Return the first ChildUser filtered by the device column *
+ * @method     ChildUser findOneByDevice(string $device) Return the first ChildUser filtered by the device column
+ * @method     ChildUser findOneByIsMember(boolean $is_member) Return the first ChildUser filtered by the is_member column *
 
  * @method     ChildUser requirePk($key, ConnectionInterface $con = null) Return the ChildUser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -99,6 +102,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneByDegree(string $degree) Return the first ChildUser filtered by the degree column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByUid(int $uid) Return the first ChildUser filtered by the uid column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByDevice(string $device) Return the first ChildUser filtered by the device column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByIsMember(boolean $is_member) Return the first ChildUser filtered by the is_member column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
@@ -111,6 +115,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findByDegree(string $degree) Return ChildUser objects filtered by the degree column
  * @method     ChildUser[]|ObjectCollection findByUid(int $uid) Return ChildUser objects filtered by the uid column
  * @method     ChildUser[]|ObjectCollection findByDevice(string $device) Return ChildUser objects filtered by the device column
+ * @method     ChildUser[]|ObjectCollection findByIsMember(boolean $is_member) Return ChildUser objects filtered by the is_member column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -209,7 +214,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `fullname`, `email`, `phone`, `job_place`, `address`, `position`, `degree`, `uid`, `device` FROM `users` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `fullname`, `email`, `phone`, `job_place`, `address`, `position`, `degree`, `uid`, `device`, `is_member` FROM `users` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -579,6 +584,33 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_DEVICE, $device, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_member column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsMember(true); // WHERE is_member = true
+     * $query->filterByIsMember('yes'); // WHERE is_member = true
+     * </code>
+     *
+     * @param     boolean|string $isMember The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByIsMember($isMember = null, $comparison = null)
+    {
+        if (is_string($isMember)) {
+            $isMember = in_array(strtolower($isMember), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_IS_MEMBER, $isMember, $comparison);
     }
 
     /**

@@ -139,6 +139,14 @@ abstract class User implements ActiveRecordInterface
     protected $device;
 
     /**
+     * The value for the is_member field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $is_member;
+
+    /**
      * @var        ObjectCollection|ChildUserSpeciality[] Collection to store aggregation of ChildUserSpeciality objects.
      */
     protected $collUserSpecialities;
@@ -180,10 +188,23 @@ abstract class User implements ActiveRecordInterface
     protected $userSpecialitiesScheduledForDeletion = null;
 
     /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->is_member = false;
+    }
+
+    /**
      * Initializes internal state of ConfBooker\Base\User object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -505,6 +526,26 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [is_member] column value.
+     *
+     * @return boolean
+     */
+    public function getIsMember()
+    {
+        return $this->is_member;
+    }
+
+    /**
+     * Get the [is_member] column value.
+     *
+     * @return boolean
+     */
+    public function isMember()
+    {
+        return $this->getIsMember();
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -705,6 +746,34 @@ abstract class User implements ActiveRecordInterface
     } // setDevice()
 
     /**
+     * Sets the value of the [is_member] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setIsMember($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->is_member !== $v) {
+            $this->is_member = $v;
+            $this->modifiedColumns[UserTableMap::COL_IS_MEMBER] = true;
+        }
+
+        return $this;
+    } // setIsMember()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -714,6 +783,10 @@ abstract class User implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->is_member !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -769,6 +842,9 @@ abstract class User implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('Device', TableMap::TYPE_PHPNAME, $indexType)];
             $this->device = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('IsMember', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->is_member = (null !== $col) ? (boolean) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -777,7 +853,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 10; // 10 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 11; // 11 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\ConfBooker\\User'), 0, $e);
@@ -1065,6 +1141,9 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_DEVICE)) {
             $modifiedColumns[':p' . $index++]  = '`device`';
         }
+        if ($this->isColumnModified(UserTableMap::COL_IS_MEMBER)) {
+            $modifiedColumns[':p' . $index++]  = '`is_member`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `users` (%s) VALUES (%s)',
@@ -1105,6 +1184,9 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case '`device`':
                         $stmt->bindValue($identifier, $this->device, PDO::PARAM_STR);
+                        break;
+                    case '`is_member`':
+                        $stmt->bindValue($identifier, (int) $this->is_member, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1198,6 +1280,9 @@ abstract class User implements ActiveRecordInterface
             case 9:
                 return $this->getDevice();
                 break;
+            case 10:
+                return $this->getIsMember();
+                break;
             default:
                 return null;
                 break;
@@ -1238,6 +1323,7 @@ abstract class User implements ActiveRecordInterface
             $keys[7] => $this->getDegree(),
             $keys[8] => $this->getUid(),
             $keys[9] => $this->getDevice(),
+            $keys[10] => $this->getIsMember(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1339,6 +1425,9 @@ abstract class User implements ActiveRecordInterface
             case 9:
                 $this->setDevice($value);
                 break;
+            case 10:
+                $this->setIsMember($value);
+                break;
         } // switch()
 
         return $this;
@@ -1394,6 +1483,9 @@ abstract class User implements ActiveRecordInterface
         }
         if (array_key_exists($keys[9], $arr)) {
             $this->setDevice($arr[$keys[9]]);
+        }
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setIsMember($arr[$keys[10]]);
         }
     }
 
@@ -1465,6 +1557,9 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_DEVICE)) {
             $criteria->add(UserTableMap::COL_DEVICE, $this->device);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_IS_MEMBER)) {
+            $criteria->add(UserTableMap::COL_IS_MEMBER, $this->is_member);
         }
 
         return $criteria;
@@ -1561,6 +1656,7 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setDegree($this->getDegree());
         $copyObj->setUid($this->getUid());
         $copyObj->setDevice($this->getDevice());
+        $copyObj->setIsMember($this->getIsMember());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2174,8 +2270,10 @@ abstract class User implements ActiveRecordInterface
         $this->degree = null;
         $this->uid = null;
         $this->device = null;
+        $this->is_member = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);

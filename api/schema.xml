@@ -64,6 +64,7 @@
         <column name="degree" type="varchar" size="24" required="false"/>
         <column name="uid" type="integer" required="false"/>
         <column name="device" type="varchar" size="200" required="false"/>
+        <column name="is_member" type="boolean" default="false" required="false"/>
 
         <!--
             A foreign key represents a relationship. Just like a table or a column, a relationship has a `phpName`.
