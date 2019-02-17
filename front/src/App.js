@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 import Alert from 'react-s-alert';
+import AppRoutes from './routes';
 
-import Registration from './components/Registration';
 import './App.css';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
@@ -43,7 +43,7 @@ class App extends Component {
     return (
       <ApolloProvider client={client}>
         <div className="App" style={style}>
-          <Registration />
+          <AppRoutes />
           <Alert stack={{limit: 3}} timeout={5000} />
         </div>
       </ApolloProvider>

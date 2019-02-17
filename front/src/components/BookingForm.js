@@ -138,7 +138,7 @@ class BookingForm extends React.Component {
               <Button variant="contained" type="submit" color="primary">
                 Записаться на конференцию
               </Button> &nbsp;
-              <Button color="secondary" onClick={e => this.props.handler(false)}>
+              <Button color="secondary" onClick={e => this.props.handler('default')}>
                 Отменить и назад
               </Button>
             </Grid>

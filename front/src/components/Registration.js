@@ -84,7 +84,7 @@ class Registration extends Component {
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
           <BookingForm
-            handler={() => this.setState({ state: 'default' })} 
+            handler={ state => this.setState({ state })} 
             data={this.state.data}
           />
         </Paper>
