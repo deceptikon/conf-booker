@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Alert from 'react-s-alert';
 
 import { formatPhone } from '../utils';
 
@@ -42,6 +43,20 @@ class BookingForm extends React.Component {
     device: '',
   };
 
+  componentDidMount() {
+    this.setState({
+      ...this.props.data,
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({
+        ...this.props.data,
+      });
+    }
+  }
+
   sendForm = (e, val) => {
     e.preventDefault();
     this.props.apollo.mutate({
@@ -54,7 +69,8 @@ class BookingForm extends React.Component {
       }
     })
       .then(res => {
-        console.log("GOOD", res);
+        Alert.success(`Регистрация успешна, ${res.data.User.fullname}!`);
+        this.props.handler('success')
       })
       .catch(err => {
         console.error("BAD", err);
@@ -72,12 +88,15 @@ class BookingForm extends React.Component {
 
   render() {
     const { fullname, phone, email, job_place, position, address, degree, device } = this.state;
-    console.log(this.props);
     return (
       <React.Fragment>
         <form onSubmit={this.sendForm}>
           <Typography variant="h6" color="primary" gutterBottom>
-            Заполните форму для участия в конференции
+            {
+              this.props.data ? 
+                'Подтвердите свои данные для участия в конференции' :
+                'Заполните форму для участия в конференции'
+            }
           </Typography>
           <Grid container spacing={32}>
             <Grid item xs={12} md={12}>
@@ -108,10 +127,14 @@ class BookingForm extends React.Component {
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox color="secondary" name="agreed" value="yes" required />}
-                label="Согласен на обработку моих личных данных"
-              />
+              {
+                !this.props.data && (
+                  <FormControlLabel
+                    control={<Checkbox color="secondary" name="agreed" value="yes" required />}
+                    label="Согласен на обработку моих личных данных"
+                  />
+                )
+              }
               <Button variant="contained" type="submit" color="primary">
                 Записаться на конференцию
               </Button> &nbsp;

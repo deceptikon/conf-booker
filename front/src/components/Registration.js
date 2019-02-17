@@ -6,6 +6,7 @@ import BookingForm from './BookingForm';
 import PhoneForm from './PhoneForm';
 import Intro, { InfoBlock } from './Intro';
 import { formatPhone } from '../utils';
+import Alert from 'react-s-alert';
 
 const findMemberByPhone = gql`
   query findMemberByPhone($phone: String) {
@@ -25,22 +26,38 @@ const findMemberByPhone = gql`
 class Registration extends Component {
   state = {
     state: 'default',
+    res: null,
   };
 
-  setRegState = state => this.setState({ state: state });
+  setRegState = state => {
+    this.setState({ 
+      state: state,
+      data: state === 'primary' ? null : this.state.data,
+    });
+  }
 
   editUser = (data) => {
     if (data) {
-      console.log("edit", formatPhone(data));
       this.props.apollo.query({
         errorPolicy: "all",
         query: findMemberByPhone,
         variables: {
-          phone: data,
+          phone: formatPhone(data),
         }
       })
         .then(res => {
-          console.log("GOOD", res);
+          const data = {};
+          if (res.data.User) {
+            Object.keys(res.data.User)
+              .filter(key => key !== '__typename')
+              .forEach(key => data[key] = res.data.User[key]);
+            this.setState({
+              data,
+              state: 'primary',
+            });
+          } else {
+            Alert.error('Пользователь не найден');
+          }
         })
         .catch(err => {
           console.error("BAD", err);
@@ -53,11 +70,23 @@ class Registration extends Component {
   render() {
     const { state } = this.state;
 
+    if(state === 'success') {
+      return (
+        <Paper style={{padding: '60px 40px'}} >
+          <InfoBlock />
+          <h3>Регистрация успешна, ожидаем вас на конференции!</h3>
+        </Paper>
+      );
+    }
+
     if(state === 'primary') {
       return (
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
-          <BookingForm handler={() => this.setState({ state: 'default' })} />
+          <BookingForm
+            handler={() => this.setState({ state: 'default' })} 
+            data={this.state.data}
+          />
         </Paper>
       );
     }

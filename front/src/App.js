@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+import Alert from 'react-s-alert';
 
 import Registration from './components/Registration';
 import './App.css';
+import 'react-s-alert/dist/s-alert-default.css';
+import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
 const style = {
   margin: '0 auto',
@@ -41,6 +44,7 @@ class App extends Component {
       <ApolloProvider client={client}>
         <div className="App" style={style}>
           <Registration />
+          <Alert stack={{limit: 3}} timeout={5000} />
         </div>
       </ApolloProvider>
     );
