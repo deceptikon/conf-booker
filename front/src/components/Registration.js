@@ -111,7 +111,7 @@ class Registration extends Component {
 
 const ApolloRegistration = (props) => (
   <ApolloConsumer>
-    { client => <Registration apollo={client} {...props}/> }
+    { client => <div style={{ maxWidth: '800px', margin: '0 auto' }}><Registration apollo={client} {...props}/></div> }
   </ApolloConsumer>
 );
 

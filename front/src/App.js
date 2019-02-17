@@ -10,7 +10,6 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
 const style = {
   margin: '0 auto',
-  maxWidth: '800px',
   minHeight: '600px',
   padding: '30px 10px',
 };
