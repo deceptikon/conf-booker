@@ -7,6 +7,7 @@ import PhoneForm from './PhoneForm';
 import Intro, { InfoBlock } from './Intro';
 import { formatPhone } from '../utils';
 import Alert from 'react-s-alert';
+import QRCode from 'qrcode.react';
 
 const findMemberByPhone = gql`
   query findMemberByPhone($phone: String) {
@@ -26,7 +27,7 @@ const findMemberByPhone = gql`
 class Registration extends Component {
   state = {
     state: 'default',
-    res: null,
+    successData: null,
   };
 
   setRegState = state => {
@@ -36,7 +37,7 @@ class Registration extends Component {
     });
   }
 
-  editUser = (data) => {
+  editUser = (data, successData = false) => {
     if (data) {
       this.props.apollo.query({
         errorPolicy: "all",
@@ -48,7 +49,7 @@ class Registration extends Component {
         .then(res => {
           const data = {};
           console.error(res);
-          if (res.data.User) {
+          if (res.data.User && res.data.User[0]) {
             Object.keys(res.data.User[0])
               .filter(key => key !== '__typename')
               .forEach(key => data[key] = res.data.User[0][key]);
@@ -69,13 +70,15 @@ class Registration extends Component {
   }
 
   render() {
-    const { state } = this.state;
+    const { state, successData } = this.state;
+    console.log(this.props);
 
     if(state === 'success') {
       return (
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
-          <h3>Регистрация успешна, ожидаем вас на конференции!</h3>
+          <h3>Регистрация успешна, { successData.fullname  }  ожидаем вас на конференции!</h3>
+          <QRCode value={successData.fullname} size="256" />
         </Paper>
       );
     }
@@ -85,7 +88,7 @@ class Registration extends Component {
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
           <BookingForm
-            handler={ state => this.setState({ state })} 
+            handler={ (state, successData) => this.setState({ state, successData })} 
             data={this.state.data}
           />
         </Paper>

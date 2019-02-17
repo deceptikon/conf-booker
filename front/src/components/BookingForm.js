@@ -70,7 +70,7 @@ class BookingForm extends React.Component {
     })
       .then(res => {
         Alert.success(`Регистрация успешна, ${res.data.User.fullname}!`);
-        this.props.handler('success')
+        this.props.handler('success', res.data.User)
       })
       .catch(err => {
         console.error("BAD", err);
