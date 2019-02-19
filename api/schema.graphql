@@ -12,6 +12,7 @@ type Mutation {
 }
 
 type User {
+    id: Int
     fullname: String
     email: String
     phone: String

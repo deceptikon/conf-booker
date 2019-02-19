@@ -38,6 +38,7 @@ function set($str) {
   return "set".$str;
 }
 
+
 function getSchema() {
   $cacheFilename = 'cached_schema.php';
 
@@ -78,6 +79,9 @@ function getSchema() {
           } else {
             $obj = new $className();
           }
+          $m = new \ConfBooker\Email;
+          $m->sendInvitation($args['data']['email'], $obj->getFullname(), $obj->getId());
+
           foreach($args['data'] as $field => $val){
             $fld = set($field);
             $obj->$fld($val);
