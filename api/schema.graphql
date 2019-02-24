@@ -22,6 +22,7 @@ type User {
     device: String
     job_place: String
     is_member: Boolean
+    data: String
 }
 
 input UserInput {
@@ -34,5 +35,6 @@ input UserInput {
     device: String
     job_place: String
     is_member: Boolean
+    data: String
 }
 

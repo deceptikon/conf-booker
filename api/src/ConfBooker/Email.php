@@ -27,6 +27,9 @@ class Email {
 
   }
   function sendInvitation($email, $name, $id, $isMember = true) {
+    if(!$email)
+      return false;
+
     $this->mailer->Subject = 'Приглашение на конференцию';
     $prefix = $isMember ? '1' : '2';
     $code = $prefix.str_pad($id, 5, "0", STR_PAD_LEFT);

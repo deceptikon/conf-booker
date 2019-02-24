@@ -79,14 +79,14 @@ function getSchema() {
           } else {
             $obj = new $className();
           }
-          $m = new \ConfBooker\Email;
-          $m->sendInvitation($args['data']['email'], $obj->getFullname(), $obj->getId(), $obj->getIsMember());
-
           foreach($args['data'] as $field => $val){
             $fld = set($field);
             $obj->$fld($val);
           }
           $obj->save();
+
+          $m = new \ConfBooker\Email;
+          $m->sendInvitation($obj->getEmail(), $obj->getFullname(), $obj->getId(), $obj->getIsMember());
           return $obj;
         }
           
