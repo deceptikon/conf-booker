@@ -23,9 +23,11 @@ export const PhoneInput = (props) => (
 const saveMember = gql`
   mutation saveMember($id: Int, $data: UserInput!) {
     User (id: $id, data: $data) {
+      id
       fullname
       email
       phone
+      is_member
     }
   }
 `
@@ -41,7 +43,9 @@ class BookingForm extends React.Component {
     address: '',
     degree: '',
     device: '',
+    disabled: false,
   };
+  btn = null;
 
   componentDidMount() {
     this.setState({
@@ -51,7 +55,6 @@ class BookingForm extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.data !== this.props.data) {
-      console.log(this.props.data);
       this.setState({
         ...this.props.data,
       });
@@ -60,8 +63,11 @@ class BookingForm extends React.Component {
 
   sendForm = (e, val) => {
     e.preventDefault();
+    this.setState({ disabled: true })
     const data = {};
-    Object.keys(this.state).filter(key => key !== 'id').forEach(key => {
+    Object.keys(this.state)
+      .filter(key => key !== 'id' && key !== 'disabled')
+      .forEach(key => {
       if (key !== 'id')
         data[key] = this.state[key];
     });
@@ -78,6 +84,7 @@ class BookingForm extends React.Component {
         this.props.handler('success', res.data.User)
       })
       .catch(err => {
+        this.setState({ disabled: false })
         console.error("BAD", err);
       });
   }
@@ -92,7 +99,7 @@ class BookingForm extends React.Component {
   }
 
   render() {
-    const { fullname, phone, email, job_place, position, address, degree, device } = this.state;
+    const { fullname, phone, email, job_place, position, address, degree, device, disabled } = this.state;
     return (
       <React.Fragment>
         <form onSubmit={this.sendForm}>
@@ -140,7 +147,7 @@ class BookingForm extends React.Component {
                   />
                 )
               }
-              <Button variant="contained" type="submit" color="primary">
+              <Button variant="contained" type="submit" color="primary" disabled={disabled}>
                 Записаться на конференцию
               </Button> &nbsp;
               <Button color="secondary" onClick={e => this.props.handler('default')}>

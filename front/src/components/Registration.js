@@ -24,6 +24,14 @@ const findMemberByPhone = gql`
     }
   }
 `
+const pad = function(s, size) {
+  while (s.length < (size || 2)) {s = "0" + s;}
+  return s;
+}
+const coder = (id, isMember) => {
+  const prefix = isMember ? 1 : 2;
+  return `${prefix}${pad(id.toString(), 5)}`;
+}
 
 class Registration extends Component {
   state = {
@@ -72,14 +80,14 @@ class Registration extends Component {
 
   render() {
     const { state, successData } = this.state;
-    console.log(this.props);
-
     if(state === 'success') {
+      const code = coder(successData.id, successData.isMember);
       return (
         <Paper style={{padding: '60px 40px'}} >
           <InfoBlock />
           <h3>Регистрация успешна, { successData.fullname  }  ожидаем вас на конференции!</h3>
-          <QRCode value={successData.fullname} size={200} />
+          <QRCode value={code} size={200} />
+          <h3>{ code }</h3>
         </Paper>
       );
     }
