@@ -59,7 +59,7 @@ class UserTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 11;
+    const NUM_COLUMNS = 13;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 11;
+    const NUM_HYDRATE_COLUMNS = 13;
 
     /**
      * the column name for the id field
@@ -80,6 +80,11 @@ class UserTableMap extends TableMap
      * the column name for the fullname field
      */
     const COL_FULLNAME = 'users.fullname';
+
+    /**
+     * the column name for the reg_date field
+     */
+    const COL_REG_DATE = 'users.reg_date';
 
     /**
      * the column name for the email field
@@ -127,6 +132,11 @@ class UserTableMap extends TableMap
     const COL_IS_MEMBER = 'users.is_member';
 
     /**
+     * the column name for the data field
+     */
+    const COL_DATA = 'users.data';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -138,11 +148,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Fullname', 'Email', 'Phone', 'JobPlace', 'Address', 'Position', 'Degree', 'Uid', 'Device', 'IsMember', ),
-        self::TYPE_CAMELNAME     => array('id', 'fullname', 'email', 'phone', 'jobPlace', 'address', 'position', 'degree', 'uid', 'device', 'isMember', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_FULLNAME, UserTableMap::COL_EMAIL, UserTableMap::COL_PHONE, UserTableMap::COL_JOB_PLACE, UserTableMap::COL_ADDRESS, UserTableMap::COL_POSITION, UserTableMap::COL_DEGREE, UserTableMap::COL_UID, UserTableMap::COL_DEVICE, UserTableMap::COL_IS_MEMBER, ),
-        self::TYPE_FIELDNAME     => array('id', 'fullname', 'email', 'phone', 'job_place', 'address', 'position', 'degree', 'uid', 'device', 'is_member', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        self::TYPE_PHPNAME       => array('Id', 'Fullname', 'RegDate', 'Email', 'Phone', 'JobPlace', 'Address', 'Position', 'Degree', 'Uid', 'Device', 'IsMember', 'Data', ),
+        self::TYPE_CAMELNAME     => array('id', 'fullname', 'regDate', 'email', 'phone', 'jobPlace', 'address', 'position', 'degree', 'uid', 'device', 'isMember', 'data', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_FULLNAME, UserTableMap::COL_REG_DATE, UserTableMap::COL_EMAIL, UserTableMap::COL_PHONE, UserTableMap::COL_JOB_PLACE, UserTableMap::COL_ADDRESS, UserTableMap::COL_POSITION, UserTableMap::COL_DEGREE, UserTableMap::COL_UID, UserTableMap::COL_DEVICE, UserTableMap::COL_IS_MEMBER, UserTableMap::COL_DATA, ),
+        self::TYPE_FIELDNAME     => array('id', 'fullname', 'reg_date', 'email', 'phone', 'job_place', 'address', 'position', 'degree', 'uid', 'device', 'is_member', 'data', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -152,11 +162,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Fullname' => 1, 'Email' => 2, 'Phone' => 3, 'JobPlace' => 4, 'Address' => 5, 'Position' => 6, 'Degree' => 7, 'Uid' => 8, 'Device' => 9, 'IsMember' => 10, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'fullname' => 1, 'email' => 2, 'phone' => 3, 'jobPlace' => 4, 'address' => 5, 'position' => 6, 'degree' => 7, 'uid' => 8, 'device' => 9, 'isMember' => 10, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_FULLNAME => 1, UserTableMap::COL_EMAIL => 2, UserTableMap::COL_PHONE => 3, UserTableMap::COL_JOB_PLACE => 4, UserTableMap::COL_ADDRESS => 5, UserTableMap::COL_POSITION => 6, UserTableMap::COL_DEGREE => 7, UserTableMap::COL_UID => 8, UserTableMap::COL_DEVICE => 9, UserTableMap::COL_IS_MEMBER => 10, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'fullname' => 1, 'email' => 2, 'phone' => 3, 'job_place' => 4, 'address' => 5, 'position' => 6, 'degree' => 7, 'uid' => 8, 'device' => 9, 'is_member' => 10, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Fullname' => 1, 'RegDate' => 2, 'Email' => 3, 'Phone' => 4, 'JobPlace' => 5, 'Address' => 6, 'Position' => 7, 'Degree' => 8, 'Uid' => 9, 'Device' => 10, 'IsMember' => 11, 'Data' => 12, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'fullname' => 1, 'regDate' => 2, 'email' => 3, 'phone' => 4, 'jobPlace' => 5, 'address' => 6, 'position' => 7, 'degree' => 8, 'uid' => 9, 'device' => 10, 'isMember' => 11, 'data' => 12, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_FULLNAME => 1, UserTableMap::COL_REG_DATE => 2, UserTableMap::COL_EMAIL => 3, UserTableMap::COL_PHONE => 4, UserTableMap::COL_JOB_PLACE => 5, UserTableMap::COL_ADDRESS => 6, UserTableMap::COL_POSITION => 7, UserTableMap::COL_DEGREE => 8, UserTableMap::COL_UID => 9, UserTableMap::COL_DEVICE => 10, UserTableMap::COL_IS_MEMBER => 11, UserTableMap::COL_DATA => 12, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'fullname' => 1, 'reg_date' => 2, 'email' => 3, 'phone' => 4, 'job_place' => 5, 'address' => 6, 'position' => 7, 'degree' => 8, 'uid' => 9, 'device' => 10, 'is_member' => 11, 'data' => 12, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -178,6 +188,7 @@ class UserTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('fullname', 'Fullname', 'VARCHAR', true, 255, null);
+        $this->addColumn('reg_date', 'RegDate', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
         $this->addColumn('email', 'Email', 'VARCHAR', true, 140, null);
         $this->addColumn('phone', 'Phone', 'VARCHAR', true, 140, null);
         $this->addColumn('job_place', 'JobPlace', 'VARCHAR', false, 100, null);
@@ -187,6 +198,7 @@ class UserTableMap extends TableMap
         $this->addColumn('uid', 'Uid', 'INTEGER', false, null, null);
         $this->addColumn('device', 'Device', 'VARCHAR', false, 200, null);
         $this->addColumn('is_member', 'IsMember', 'BOOLEAN', false, 1, false);
+        $this->addColumn('data', 'Data', 'CLOB', false, null, null);
     } // initialize()
 
     /**
@@ -354,6 +366,7 @@ class UserTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(UserTableMap::COL_ID);
             $criteria->addSelectColumn(UserTableMap::COL_FULLNAME);
+            $criteria->addSelectColumn(UserTableMap::COL_REG_DATE);
             $criteria->addSelectColumn(UserTableMap::COL_EMAIL);
             $criteria->addSelectColumn(UserTableMap::COL_PHONE);
             $criteria->addSelectColumn(UserTableMap::COL_JOB_PLACE);
@@ -363,9 +376,11 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn(UserTableMap::COL_UID);
             $criteria->addSelectColumn(UserTableMap::COL_DEVICE);
             $criteria->addSelectColumn(UserTableMap::COL_IS_MEMBER);
+            $criteria->addSelectColumn(UserTableMap::COL_DATA);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.fullname');
+            $criteria->addSelectColumn($alias . '.reg_date');
             $criteria->addSelectColumn($alias . '.email');
             $criteria->addSelectColumn($alias . '.phone');
             $criteria->addSelectColumn($alias . '.job_place');
@@ -375,6 +390,7 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.uid');
             $criteria->addSelectColumn($alias . '.device');
             $criteria->addSelectColumn($alias . '.is_member');
+            $criteria->addSelectColumn($alias . '.data');
         }
     }
 

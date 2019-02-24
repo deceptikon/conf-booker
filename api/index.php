@@ -80,7 +80,7 @@ function getSchema() {
             $obj = new $className();
           }
           $m = new \ConfBooker\Email;
-          $m->sendInvitation($args['data']['email'], $obj->getFullname(), $obj->getId());
+          $m->sendInvitation($args['data']['email'], $obj->getFullname(), $obj->getId(), $obj->getIsMember());
 
           foreach($args['data'] as $field => $val){
             $fld = set($field);

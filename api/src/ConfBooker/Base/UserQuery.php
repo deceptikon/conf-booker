@@ -22,6 +22,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildUserQuery orderByFullname($order = Criteria::ASC) Order by the fullname column
+ * @method     ChildUserQuery orderByRegDate($order = Criteria::ASC) Order by the reg_date column
  * @method     ChildUserQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildUserQuery orderByPhone($order = Criteria::ASC) Order by the phone column
  * @method     ChildUserQuery orderByJobPlace($order = Criteria::ASC) Order by the job_place column
@@ -31,9 +32,11 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByUid($order = Criteria::ASC) Order by the uid column
  * @method     ChildUserQuery orderByDevice($order = Criteria::ASC) Order by the device column
  * @method     ChildUserQuery orderByIsMember($order = Criteria::ASC) Order by the is_member column
+ * @method     ChildUserQuery orderByData($order = Criteria::ASC) Order by the data column
  *
  * @method     ChildUserQuery groupById() Group by the id column
  * @method     ChildUserQuery groupByFullname() Group by the fullname column
+ * @method     ChildUserQuery groupByRegDate() Group by the reg_date column
  * @method     ChildUserQuery groupByEmail() Group by the email column
  * @method     ChildUserQuery groupByPhone() Group by the phone column
  * @method     ChildUserQuery groupByJobPlace() Group by the job_place column
@@ -43,6 +46,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupByUid() Group by the uid column
  * @method     ChildUserQuery groupByDevice() Group by the device column
  * @method     ChildUserQuery groupByIsMember() Group by the is_member column
+ * @method     ChildUserQuery groupByData() Group by the data column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -79,6 +83,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
  * @method     ChildUser findOneByFullname(string $fullname) Return the first ChildUser filtered by the fullname column
+ * @method     ChildUser findOneByRegDate(string $reg_date) Return the first ChildUser filtered by the reg_date column
  * @method     ChildUser findOneByEmail(string $email) Return the first ChildUser filtered by the email column
  * @method     ChildUser findOneByPhone(string $phone) Return the first ChildUser filtered by the phone column
  * @method     ChildUser findOneByJobPlace(string $job_place) Return the first ChildUser filtered by the job_place column
@@ -87,13 +92,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneByDegree(string $degree) Return the first ChildUser filtered by the degree column
  * @method     ChildUser findOneByUid(int $uid) Return the first ChildUser filtered by the uid column
  * @method     ChildUser findOneByDevice(string $device) Return the first ChildUser filtered by the device column
- * @method     ChildUser findOneByIsMember(boolean $is_member) Return the first ChildUser filtered by the is_member column *
+ * @method     ChildUser findOneByIsMember(boolean $is_member) Return the first ChildUser filtered by the is_member column
+ * @method     ChildUser findOneByData(string $data) Return the first ChildUser filtered by the data column *
 
  * @method     ChildUser requirePk($key, ConnectionInterface $con = null) Return the ChildUser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser requireOneById(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByFullname(string $fullname) Return the first ChildUser filtered by the fullname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByRegDate(string $reg_date) Return the first ChildUser filtered by the reg_date column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmail(string $email) Return the first ChildUser filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByPhone(string $phone) Return the first ChildUser filtered by the phone column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByJobPlace(string $job_place) Return the first ChildUser filtered by the job_place column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -103,10 +110,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneByUid(int $uid) Return the first ChildUser filtered by the uid column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByDevice(string $device) Return the first ChildUser filtered by the device column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByIsMember(boolean $is_member) Return the first ChildUser filtered by the is_member column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByData(string $data) Return the first ChildUser filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
  * @method     ChildUser[]|ObjectCollection findByFullname(string $fullname) Return ChildUser objects filtered by the fullname column
+ * @method     ChildUser[]|ObjectCollection findByRegDate(string $reg_date) Return ChildUser objects filtered by the reg_date column
  * @method     ChildUser[]|ObjectCollection findByEmail(string $email) Return ChildUser objects filtered by the email column
  * @method     ChildUser[]|ObjectCollection findByPhone(string $phone) Return ChildUser objects filtered by the phone column
  * @method     ChildUser[]|ObjectCollection findByJobPlace(string $job_place) Return ChildUser objects filtered by the job_place column
@@ -116,6 +125,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findByUid(int $uid) Return ChildUser objects filtered by the uid column
  * @method     ChildUser[]|ObjectCollection findByDevice(string $device) Return ChildUser objects filtered by the device column
  * @method     ChildUser[]|ObjectCollection findByIsMember(boolean $is_member) Return ChildUser objects filtered by the is_member column
+ * @method     ChildUser[]|ObjectCollection findByData(string $data) Return ChildUser objects filtered by the data column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -214,7 +224,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `fullname`, `email`, `phone`, `job_place`, `address`, `position`, `degree`, `uid`, `device`, `is_member` FROM `users` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `fullname`, `reg_date`, `email`, `phone`, `job_place`, `address`, `position`, `degree`, `uid`, `device`, `is_member`, `data` FROM `users` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -368,6 +378,49 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_FULLNAME, $fullname, $comparison);
+    }
+
+    /**
+     * Filter the query on the reg_date column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByRegDate('2011-03-14'); // WHERE reg_date = '2011-03-14'
+     * $query->filterByRegDate('now'); // WHERE reg_date = '2011-03-14'
+     * $query->filterByRegDate(array('max' => 'yesterday')); // WHERE reg_date > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $regDate The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByRegDate($regDate = null, $comparison = null)
+    {
+        if (is_array($regDate)) {
+            $useMinMax = false;
+            if (isset($regDate['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_REG_DATE, $regDate['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($regDate['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_REG_DATE, $regDate['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_REG_DATE, $regDate, $comparison);
     }
 
     /**
@@ -611,6 +664,31 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_IS_MEMBER, $isMember, $comparison);
+    }
+
+    /**
+     * Filter the query on the data column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByData('fooValue');   // WHERE data = 'fooValue'
+     * $query->filterByData('%fooValue%', Criteria::LIKE); // WHERE data LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $data The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByData($data = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($data)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_DATA, $data, $comparison);
     }
 
     /**

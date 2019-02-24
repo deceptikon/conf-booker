@@ -2,6 +2,7 @@
 namespace ConfBooker;
 
 use \PHPMailer\PHPMailer\PHPMailer;
+use Endroid\QrCode\QrCode;
 
 
 
@@ -27,13 +28,38 @@ class Email {
   }
   function sendInvitation($email, $name, $id, $isMember = true) {
     $this->mailer->Subject = 'Приглашение на конференцию';
-    if ($isMember) {
-      $this->mailer->Body    = <<<MAILBODY
+    $prefix = $isMember ? '1' : '2';
+    $code = $prefix.str_pad($id, 5, "0", STR_PAD_LEFT);
+    $qrCode = new QrCode($code);
+
+    $this->mailer->addStringEmbeddedImage(
+      $qrCode->writeString(), 
+      'qr',
+      'qr-code.png',
+      PHPMailer::ENCODING_BASE64,
+      'image/png'
+    ); 
+    $nonmembers = $isMember ? '' : 'Если вы не являетесь активным членом АРКР, участие в конференции платное, стоимость участия 1000 сом ( оплату можно произвести на стойке регистрации).
+      <br/> Либо же вы можете стать членом АРКР ( вступительный и членский взнос 1000 сом) и участвовать на этом и последующих конгрессах бесплатно.<br/>';
+
+    $this->mailer->Body    = <<<MAILBODY
 Здравствуйте, $name
 <h2>
 Ваша регистрация прошла успешно.
 </h2>
+$nonmembers<br/>
 Пожалуйста распечатайте пригласительное для предъявления на стойке регистрации. 
+<br/>
+<br/>
+<table width="400" border="1" style="border: 1px solid #EEE">
+  <tr><td style="font-weight:bold;font-size:14px;padding:5px;text-align:center;">
+Ежегодный Международный Конгресс Радиологов
+</td></tr>
+  <tr><td style="font-size:48px;text-align:center;">
+    <img src="cid:qr" alt="" />
+    <br/>$code
+  </td></tr>
+</table>
 <hr/>
 <br/>
 <strong>
@@ -54,11 +80,9 @@ class Email {
 <br/>
 <br/>
 
-И + код регистр Баркод или Qr код С ЭТИМ ПОКА ПРОБЛЕМА
-
 MAILBODY;
 
-      $this->mailer->AltBody    = <<<MAILBODY
+    $this->mailer->AltBody    = <<<MAILBODY
 $name
 Ваша регистрация прошла успешно.
 
@@ -71,18 +95,13 @@ $name
 Примечание! 
 На стойке регистрации вы можете оплатить членские взносы за 2019 год. 
 
-И + код регистр Баркод или Qr код С ЭТИМ ПОКА ПРОБЛЕМА
-
 MAILBODY;
-    } else {
-    
-    }
 
     $this->mailer->AddAddress($email, $name);  // Add a recipient
 
     if(!$this->mailer->Send()) {
       echo 'Message could not be sent.';
-      echo 'Mailer Error: ' . $mail->ErrorInfo;
+      echo 'Mailer Error: ' . $this->mailer->ErrorInfo;
       exit;
     }
   }

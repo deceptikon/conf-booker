@@ -2,6 +2,7 @@
 
 namespace ConfBooker\Base;
 
+use \DateTime;
 use \Exception;
 use \PDO;
 use ConfBooker\Specialities as ChildSpecialities;
@@ -26,6 +27,7 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'users' table.
@@ -81,6 +83,14 @@ abstract class User implements ActiveRecordInterface
      * @var        string
      */
     protected $fullname;
+
+    /**
+     * The value for the reg_date field.
+     *
+     * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
+     * @var        DateTime
+     */
+    protected $reg_date;
 
     /**
      * The value for the email field.
@@ -145,6 +155,13 @@ abstract class User implements ActiveRecordInterface
      * @var        boolean
      */
     protected $is_member;
+
+    /**
+     * The value for the data field.
+     *
+     * @var        string
+     */
+    protected $data;
 
     /**
      * @var        ObjectCollection|ChildUserSpeciality[] Collection to store aggregation of ChildUserSpeciality objects.
@@ -446,6 +463,26 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [reg_date] column value.
+     *
+     *
+     * @param      string|null $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getRegDate($format = NULL)
+    {
+        if ($format === null) {
+            return $this->reg_date;
+        } else {
+            return $this->reg_date instanceof \DateTimeInterface ? $this->reg_date->format($format) : null;
+        }
+    }
+
+    /**
      * Get the [email] column value.
      *
      * @return string
@@ -546,6 +583,16 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [data] column value.
+     *
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -584,6 +631,26 @@ abstract class User implements ActiveRecordInterface
 
         return $this;
     } // setFullname()
+
+    /**
+     * Sets the value of [reg_date] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setRegDate($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->reg_date !== null || $dt !== null) {
+            if ($this->reg_date === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->reg_date->format("Y-m-d H:i:s.u")) {
+                $this->reg_date = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserTableMap::COL_REG_DATE] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setRegDate()
 
     /**
      * Set the value of [email] column.
@@ -774,6 +841,26 @@ abstract class User implements ActiveRecordInterface
     } // setIsMember()
 
     /**
+     * Set the value of [data] column.
+     *
+     * @param string $v new value
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function setData($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->data !== $v) {
+            $this->data = $v;
+            $this->modifiedColumns[UserTableMap::COL_DATA] = true;
+        }
+
+        return $this;
+    } // setData()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -819,32 +906,41 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Fullname', TableMap::TYPE_PHPNAME, $indexType)];
             $this->fullname = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('RegDate', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->reg_date = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Phone', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('Phone', TableMap::TYPE_PHPNAME, $indexType)];
             $this->phone = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('JobPlace', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('JobPlace', TableMap::TYPE_PHPNAME, $indexType)];
             $this->job_place = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('Address', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('Address', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('Position', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('Position', TableMap::TYPE_PHPNAME, $indexType)];
             $this->position = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('Degree', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('Degree', TableMap::TYPE_PHPNAME, $indexType)];
             $this->degree = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('Uid', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('Uid', TableMap::TYPE_PHPNAME, $indexType)];
             $this->uid = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('Device', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('Device', TableMap::TYPE_PHPNAME, $indexType)];
             $this->device = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('IsMember', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('IsMember', TableMap::TYPE_PHPNAME, $indexType)];
             $this->is_member = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('Data', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->data = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -853,7 +949,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 13; // 13 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\ConfBooker\\User'), 0, $e);
@@ -1117,6 +1213,9 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_FULLNAME)) {
             $modifiedColumns[':p' . $index++]  = '`fullname`';
         }
+        if ($this->isColumnModified(UserTableMap::COL_REG_DATE)) {
+            $modifiedColumns[':p' . $index++]  = '`reg_date`';
+        }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = '`email`';
         }
@@ -1144,6 +1243,9 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_IS_MEMBER)) {
             $modifiedColumns[':p' . $index++]  = '`is_member`';
         }
+        if ($this->isColumnModified(UserTableMap::COL_DATA)) {
+            $modifiedColumns[':p' . $index++]  = '`data`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `users` (%s) VALUES (%s)',
@@ -1160,6 +1262,9 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case '`fullname`':
                         $stmt->bindValue($identifier, $this->fullname, PDO::PARAM_STR);
+                        break;
+                    case '`reg_date`':
+                        $stmt->bindValue($identifier, $this->reg_date ? $this->reg_date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case '`email`':
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
@@ -1187,6 +1292,9 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case '`is_member`':
                         $stmt->bindValue($identifier, (int) $this->is_member, PDO::PARAM_INT);
+                        break;
+                    case '`data`':
+                        $stmt->bindValue($identifier, $this->data, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1257,31 +1365,37 @@ abstract class User implements ActiveRecordInterface
                 return $this->getFullname();
                 break;
             case 2:
-                return $this->getEmail();
+                return $this->getRegDate();
                 break;
             case 3:
-                return $this->getPhone();
+                return $this->getEmail();
                 break;
             case 4:
-                return $this->getJobPlace();
+                return $this->getPhone();
                 break;
             case 5:
-                return $this->getAddress();
+                return $this->getJobPlace();
                 break;
             case 6:
-                return $this->getPosition();
+                return $this->getAddress();
                 break;
             case 7:
-                return $this->getDegree();
+                return $this->getPosition();
                 break;
             case 8:
-                return $this->getUid();
+                return $this->getDegree();
                 break;
             case 9:
-                return $this->getDevice();
+                return $this->getUid();
                 break;
             case 10:
+                return $this->getDevice();
+                break;
+            case 11:
                 return $this->getIsMember();
+                break;
+            case 12:
+                return $this->getData();
                 break;
             default:
                 return null;
@@ -1315,16 +1429,22 @@ abstract class User implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getFullname(),
-            $keys[2] => $this->getEmail(),
-            $keys[3] => $this->getPhone(),
-            $keys[4] => $this->getJobPlace(),
-            $keys[5] => $this->getAddress(),
-            $keys[6] => $this->getPosition(),
-            $keys[7] => $this->getDegree(),
-            $keys[8] => $this->getUid(),
-            $keys[9] => $this->getDevice(),
-            $keys[10] => $this->getIsMember(),
+            $keys[2] => $this->getRegDate(),
+            $keys[3] => $this->getEmail(),
+            $keys[4] => $this->getPhone(),
+            $keys[5] => $this->getJobPlace(),
+            $keys[6] => $this->getAddress(),
+            $keys[7] => $this->getPosition(),
+            $keys[8] => $this->getDegree(),
+            $keys[9] => $this->getUid(),
+            $keys[10] => $this->getDevice(),
+            $keys[11] => $this->getIsMember(),
+            $keys[12] => $this->getData(),
         );
+        if ($result[$keys[2]] instanceof \DateTimeInterface) {
+            $result[$keys[2]] = $result[$keys[2]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -1402,31 +1522,37 @@ abstract class User implements ActiveRecordInterface
                 $this->setFullname($value);
                 break;
             case 2:
-                $this->setEmail($value);
+                $this->setRegDate($value);
                 break;
             case 3:
-                $this->setPhone($value);
+                $this->setEmail($value);
                 break;
             case 4:
-                $this->setJobPlace($value);
+                $this->setPhone($value);
                 break;
             case 5:
-                $this->setAddress($value);
+                $this->setJobPlace($value);
                 break;
             case 6:
-                $this->setPosition($value);
+                $this->setAddress($value);
                 break;
             case 7:
-                $this->setDegree($value);
+                $this->setPosition($value);
                 break;
             case 8:
-                $this->setUid($value);
+                $this->setDegree($value);
                 break;
             case 9:
-                $this->setDevice($value);
+                $this->setUid($value);
                 break;
             case 10:
+                $this->setDevice($value);
+                break;
+            case 11:
                 $this->setIsMember($value);
+                break;
+            case 12:
+                $this->setData($value);
                 break;
         } // switch()
 
@@ -1461,31 +1587,37 @@ abstract class User implements ActiveRecordInterface
             $this->setFullname($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setEmail($arr[$keys[2]]);
+            $this->setRegDate($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPhone($arr[$keys[3]]);
+            $this->setEmail($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setJobPlace($arr[$keys[4]]);
+            $this->setPhone($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setAddress($arr[$keys[5]]);
+            $this->setJobPlace($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setPosition($arr[$keys[6]]);
+            $this->setAddress($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setDegree($arr[$keys[7]]);
+            $this->setPosition($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setUid($arr[$keys[8]]);
+            $this->setDegree($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setDevice($arr[$keys[9]]);
+            $this->setUid($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setIsMember($arr[$keys[10]]);
+            $this->setDevice($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setIsMember($arr[$keys[11]]);
+        }
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setData($arr[$keys[12]]);
         }
     }
 
@@ -1534,6 +1666,9 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_FULLNAME)) {
             $criteria->add(UserTableMap::COL_FULLNAME, $this->fullname);
         }
+        if ($this->isColumnModified(UserTableMap::COL_REG_DATE)) {
+            $criteria->add(UserTableMap::COL_REG_DATE, $this->reg_date);
+        }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
             $criteria->add(UserTableMap::COL_EMAIL, $this->email);
         }
@@ -1560,6 +1695,9 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_IS_MEMBER)) {
             $criteria->add(UserTableMap::COL_IS_MEMBER, $this->is_member);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_DATA)) {
+            $criteria->add(UserTableMap::COL_DATA, $this->data);
         }
 
         return $criteria;
@@ -1648,6 +1786,7 @@ abstract class User implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setFullname($this->getFullname());
+        $copyObj->setRegDate($this->getRegDate());
         $copyObj->setEmail($this->getEmail());
         $copyObj->setPhone($this->getPhone());
         $copyObj->setJobPlace($this->getJobPlace());
@@ -1657,6 +1796,7 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setUid($this->getUid());
         $copyObj->setDevice($this->getDevice());
         $copyObj->setIsMember($this->getIsMember());
+        $copyObj->setData($this->getData());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2262,6 +2402,7 @@ abstract class User implements ActiveRecordInterface
     {
         $this->id = null;
         $this->fullname = null;
+        $this->reg_date = null;
         $this->email = null;
         $this->phone = null;
         $this->job_place = null;
@@ -2271,6 +2412,7 @@ abstract class User implements ActiveRecordInterface
         $this->uid = null;
         $this->device = null;
         $this->is_member = null;
+        $this->data = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
