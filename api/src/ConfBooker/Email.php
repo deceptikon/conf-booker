@@ -27,7 +27,7 @@ class Email {
 
   }
   function sendInvitation($email, $name, $id, $isMember = true) {
-    if(!$email)
+    if(!$email || !filter_var($email, FILTER_VALIDATE_EMAIL))
       return false;
 
     $this->mailer->Subject = 'Приглашение на конференцию';

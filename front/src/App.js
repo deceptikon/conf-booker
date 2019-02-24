@@ -32,8 +32,8 @@ const defaultOptions = {
 };
 
 const client = new ApolloClient({
-  uri: "http://localhost:8000/graphql",
-  //uri: "http://arkr.kg/api/",
+  // uri: "http://localhost:8000/graphql",
+  uri: "http://arkr.kg/api/",
 });
 
 client.options = defaultOptions;
