@@ -51,6 +51,7 @@ class BookingForm extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.data !== this.props.data) {
+      console.log(this.props.data);
       this.setState({
         ...this.props.data,
       });
@@ -59,13 +60,17 @@ class BookingForm extends React.Component {
 
   sendForm = (e, val) => {
     e.preventDefault();
+    const data = {};
+    Object.keys(this.state).filter(key => key !== 'id').forEach(key => {
+      if (key !== 'id')
+        data[key] = this.state[key];
+    });
     this.props.apollo.mutate({
       errorPolicy: "all",
       mutation: saveMember,
       variables: {
-        data: {
-          ...this.state,
-        }
+        id: this.state.id,
+        data,
       }
     })
       .then(res => {

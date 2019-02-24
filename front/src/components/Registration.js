@@ -12,6 +12,7 @@ import QRCode from 'qrcode.react';
 const findMemberByPhone = gql`
   query findMemberByPhone($phone: String) {
     User (phone: $phone) {
+      id
       fullname
       email
       phone
