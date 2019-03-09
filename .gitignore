@@ -17,3 +17,7 @@ utils/venv/
 utils/db\.csv
 
 *.zip
+
+pwa-qr-code-scanner/
+
+api/api\.tar\.gz

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import BookingForm, { PhoneInput } from './BookingForm';
+import { PhoneInput } from './BookingForm';
 import Intro from './Intro';
 
 

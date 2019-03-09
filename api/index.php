@@ -141,7 +141,7 @@ $app = new Slim\App($settings);
 
 
 
-$app->post('/graphql', function ($request, $response, $args) {
+$app->map(['GET', 'POST'], '/graphql', function ($request, $response, $args) {
 
     try {
         $schema = getSchema();
