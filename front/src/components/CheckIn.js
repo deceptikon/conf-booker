@@ -8,9 +8,10 @@ import gql from 'graphql-tag';
 import QrReader from './QrReader';
 
 const recordGuest = gql`
-  mutation recordGuest {
-    newGuest {
+  mutation recordGuest($pin: Int!) {
+    newGuest(pin: $pin) {
       status
+      name
     }
   }
 `
@@ -30,6 +31,10 @@ class ViewUsers extends Component {
   submitPin = (e) => {
     e.preventDefault();
     const pin = Number(this.state.pin.replace(/ /g, ''));
+    this.setState({
+      error: null,
+      success: null,
+    });
     !isNaN(pin) && this.props.apollo.mutate({
         errorPolicy: "all",
         mutation: recordGuest,
@@ -38,20 +43,29 @@ class ViewUsers extends Component {
         } 
       })
         .then(res => {
-          console.error(res);
-          if (res.data.User) {
+          if (res.data.newGuest.status === 'ok') {
+            console.error(res);
             this.setState({
-              users: res.data.User
+              success: `Участник ${res.data.newGuest.name} подтвержден`,
+              error: null,
+              showQr: false,
+              pin: '',
+            });
+          } else {
+            this.setState({
+              success: null,
+              error: "Гость не найден",
+              showQr: false,
             });
           }
         })
         .catch(err => {
-          console.error("BAD", err);
+          console.error("BAD GUEST REQUEST: ", err);
         });
   }
   
   render() {
-    const { users, pin, showQr } = this.state;
+    const { users, pin, showQr, error, success } = this.state;
 
     if (false && !users) {
       return (<div>Загружается...</div>);
@@ -78,6 +92,8 @@ class ViewUsers extends Component {
         <p>
           <small>или</small>
         </p>
+        { error && <div className="error">{ error }</div> }
+        { success && <div className="success">{ success }</div> }
         <form onSubmit={this.submitPin}>
           <PinInput 
             required id="speciality" label="Введите пин гостя"

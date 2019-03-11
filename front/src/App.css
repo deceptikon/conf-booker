@@ -56,3 +56,26 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', end
     transform: rotate(360deg);
   }
 }
+
+
+.error {
+  color: crimson;
+  text-align:center;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 15px;
+  border: 1px crimson dashed;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.success {
+  color: teal;
+  text-align:center;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 15px;
+  border: 1px teal dotted;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
