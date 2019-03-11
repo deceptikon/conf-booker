@@ -76,6 +76,11 @@
         -->
     </table>
 
+    <table name="participants">
+      <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+      <column name="name" type="VARCHAR" size="32"/>
+    </table>
+
     <table name="specialities">
       <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
       <column name="name" type="VARCHAR" size="32"/>
