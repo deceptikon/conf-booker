@@ -43,10 +43,11 @@ function process(input) {
 
     let result = false;
     try {
-        result = qrcode.process();
-      console.log("qr scan res", result);
+      console.warn("worker qr: ", qrcode);
+      result = qrcode.process();
+      console.log("worker qr scan res: ", result);
     } catch (e) {
-      console.error(e);
+      console.error('worker error: ', e);
     }
 
     postMessage(result);

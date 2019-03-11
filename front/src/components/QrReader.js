@@ -6,9 +6,31 @@ const styles = {
   container: {
     maxWidth: '600px',
     margin: '0 auto',
+    position: 'relative',
   },
-  video: {
+  camera: {
+    /*  position: 'fixed',
+    top: '50%',
+    left: '50%',
+    minWidth: '100%',
+    minHeight: '100%',
+    width: 'auto',
+    height: 'auto',
+    zIndex: '-100',
+    transform: 'translateX(-50%) translateY(-50%)',*/
     width: '100%',
+  },
+  overlay: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '70vmin',
+    height: '70vmin',
+    transform: 'translateX(-50%) translateY(-50%)',
+    textAlign: 'center',
+  },
+  snapshot: {
+    display: 'none',
   }
 };
 
@@ -21,9 +43,16 @@ class QrReader extends React.Component {
   qrcodeWorker = null;
   video = null;
   overlay = null;
+  timer = null;
 
   componentDidMount() {
     this.init();
+  }
+
+  componentWillUnmount(){
+    console.log(">>>", this.timer);
+    clearTimeout(this.timer);
+    this.stopStream();
   }
 
   init = () => {
@@ -43,6 +72,7 @@ class QrReader extends React.Component {
   }
 
   showResult = (e) => {
+      console.log("showResult: ", e);
       const resultData = e.data;
       // open a dialog with the result if found
       if (resultData !== false) {
@@ -87,46 +117,40 @@ class QrReader extends React.Component {
   }
 
   scanCode = (wasSuccess) => {
-    setTimeout(() => {
-      console.log("scanCode: ");
-          // if (flipCameraButton.disabled) {
-          //     // terminate this loop
-          //     loadingElement.style.display = "none";
-          //     return;
-          // }
-
-            // show loading
-          //loadingElement.style.display = "block";
-
-            // capture current snapshot
-          this.snapshotContext.drawImage(
-            this.video, 
-            this.snapshotSquare.x, 
-            this.snapshotSquare.y, 
-            this.snapshotSquare.size, 
-            this.snapshotSquare.size,
-            0, 
-            0, 
-            this.snapshotSquare.size, 
-            this.snapshotSquare.size
-          );
-          const imageData = this.snapshotContext.getImageData(
-            0, 
-            0, 
-            this.snapshotSquare.size, 
-            this.snapshotSquare.size
-          );
-
-            // scan for QRCode
-          console.error("SCAN:", imageData);
-          this.qrcodeWorker.postMessage({
-            cmd: 'process',
-            width: this.snapshotSquare.size,
-            height: this.snapshotSquare.size,
-            imageData: imageData
-          });
-        }, wasSuccess ? 2000 : 120);
-    }
+    this.timer = setTimeout(() => {
+      // capture current snapshot
+      try {
+        this.snapshotContext.drawImage(
+          this.video, 
+          this.snapshotSquare.x, 
+          this.snapshotSquare.y, 
+          this.snapshotSquare.size, 
+          this.snapshotSquare.size,
+          0, 
+          0, 
+          this.snapshotSquare.size, 
+          this.snapshotSquare.size
+        );
+        const imageData = this.snapshotContext.getImageData(
+          0, 
+          0, 
+          this.snapshotSquare.size, 
+          this.snapshotSquare.size
+        );
+        
+        // scan for QRCode
+        console.error("SCAN:", imageData);
+        this.qrcodeWorker.postMessage({
+          cmd: 'process',
+          width: this.snapshotSquare.size,
+          height: this.snapshotSquare.size,
+          imageData: imageData
+        });
+      } catch(e) {
+        console.error("---> scanCode error: ", e);
+      }
+    }, wasSuccess ? 2000 : 120);
+  }
 
   initVideoStream = () => {
       let config = {
@@ -162,25 +186,12 @@ class QrReader extends React.Component {
   render() {
     return (
       <div className="qr-reader" style={styles.container}>
-        <LinearProgress variant="query" />
-        <video id="camera" autoPlay ref={ref => this.video = ref} style={styles.video}>
+        <LinearProgress variant="query" color="secondary" />
+        <video id="camera" style={styles.camera} autoPlay ref={ref => this.video = ref}>
           You need a camera in order to use this app.
         </video>
-        <div id="snapshotLimitOverlay" ref={ ref => this.overlay = ref }>
-        <div id="about">
-            <h4>QR Code Scanner</h4>
-            <p>
-                This is a lightweight progressive web app for scanning QR Codes offline.<br />
-                You'll need at least a camera and a compatible browser.<br />
-                Source code is available on GitHub (Minishlink/pwa-qr-code-scanner), click the <strong>About</strong> button.
-            </p>
-        </div>
-    </div>
-    <canvas id="snapshot" ref={ref => this.snapshotCanvas = ref}></canvas>
-    <button id="flipCamera" type="button" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Flip Camera</button>
-    <a id="aboutButton" type="button" href="https://github.com/Minishlink/pwa-qr-code-scanner" className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">About</a>
-
-      
+        <div id="snapshotLimitOverlay" style={styles.overlay} ref={ ref => this.overlay = ref }></div>
+        <canvas id="snapshot" style={styles.snapshot} ref={ref => this.snapshotCanvas = ref}></canvas>
       </div>
     ); 
   }

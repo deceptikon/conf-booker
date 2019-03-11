@@ -24,6 +24,7 @@ export const PinInput = (props) => (
 class ViewUsers extends Component {
   state = {
     pin: '',
+    showQr: false,
   };
 
   submitPin = (e) => {
@@ -50,7 +51,7 @@ class ViewUsers extends Component {
   }
   
   render() {
-    const { users, pin } = this.state;
+    const { users, pin, showQr } = this.state;
 
     if (false && !users) {
       return (<div>Загружается...</div>);
@@ -59,8 +60,24 @@ class ViewUsers extends Component {
     console.log(p, p && p.length);
 
     return (
-      <Paper style={{padding: '60px 40px'}} >
-        <QrReader />
+      <Paper style={{padding: '60px 40px', maxWidth: '600px', margin: '0 auto', }} >
+        <Button 
+          variant="contained" 
+          color={ !showQr ? 'primary' : 'secondary' }
+          type="button"
+          fullWidth
+          style={{ fontSize: showQr ? '12px' : '30px' }}
+          size={ !showQr ? 'large' : 'small' }
+          onClick={e => this.setState({showQr: !showQr})}
+        >
+          { showQr ? 'Остановить считывание' : 'Считать QR-код' } 
+        </Button>
+        {
+          showQr && <QrReader />
+        }
+        <p>
+          <small>или</small>
+        </p>
         <form onSubmit={this.submitPin}>
           <PinInput 
             required id="speciality" label="Введите пин гостя"
