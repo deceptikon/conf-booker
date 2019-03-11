@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Paper from '@material-ui/core/Paper';
+// import Paper from '@material-uicore/Paper';
 import { ApolloConsumer } from "react-apollo";
 import gql from 'graphql-tag';
 
@@ -36,27 +36,27 @@ const CustomTableCell = withStyles(theme => ({
   },
 }))(TableCell);
 
-const styles = theme => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
-    overflowX: 'auto',
-  },
-  table: {
-    minWidth: 700,
-  },
-  row: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.background.default,
-    },
-  },
-});
-
-const User = ({data}) => {
-  return (
-    <div>{ data.fullname }</div>
-  );
-};
+//const styles = theme => ({
+//  root: {
+//    width: '100%',
+//    marginTop: theme.spacing.unit * 3,
+//    overflowX: 'auto',
+//  },
+//  table: {
+//    minWidth: 700,
+//  },
+//  row: {
+//    '&:nth-of-type(odd)': {
+//      backgroundColor: theme.palette.background.default,
+//    },
+//  },
+//});
+//
+//const User = ({data}) => {
+//  return (
+//    <div>{ data.fullname }</div>
+//  );
+//};
 
 class ViewUsers extends Component {
   state = {
@@ -69,8 +69,6 @@ class ViewUsers extends Component {
         query: allUsers,
       })
         .then(res => {
-          const data = {};
-          console.error(res);
           if (res.data.User) {
             this.setState({
               users: res.data.User
@@ -84,7 +82,6 @@ class ViewUsers extends Component {
   
   render() {
     const { users } = this.state;
-    const { classes } = this.props;
 
     if (!users) {
       return (<div>Загружается...</div>);

@@ -5,6 +5,7 @@ import InputMask from 'react-input-mask';
 import TextField from '@material-ui/core/TextField';
 import { ApolloConsumer } from "react-apollo";
 import gql from 'graphql-tag';
+import QrReader from './QrReader';
 
 const recordGuest = gql`
   mutation recordGuest {
@@ -27,11 +28,12 @@ class ViewUsers extends Component {
 
   submitPin = (e) => {
     e.preventDefault();
-    this.props.apollo.mutate({
+    const pin = Number(this.state.pin.replace(/ /g, ''));
+    !isNaN(pin) && this.props.apollo.mutate({
         errorPolicy: "all",
         mutation: recordGuest,
         variables: {
-          pin: this.state.pin,
+          pin, 
         } 
       })
         .then(res => {
@@ -58,6 +60,7 @@ class ViewUsers extends Component {
 
     return (
       <Paper style={{padding: '60px 40px'}} >
+        <QrReader />
         <form onSubmit={this.submitPin}>
           <PinInput 
             required id="speciality" label="Введите пин гостя"

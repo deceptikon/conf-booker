@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import { PhoneInput } from './BookingForm';
-import Intro from './Intro';
 
 
 class PhoneForm extends Component {
@@ -42,7 +41,7 @@ class PhoneForm extends Component {
           <br />
           <br />
           <br />
-          <a href="#" onClick={this.newRegistration}>Пройти первичную регистрацию</a>
+          <a href="/register" onClick={this.newRegistration}>Пройти первичную регистрацию</a>
         </form>
       </Paper>
     );
