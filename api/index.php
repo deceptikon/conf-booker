@@ -55,6 +55,8 @@ function getSchema() {
         $isObject = false;
         $isField = false;
 
+
+
         // If it is a top-level object
         if ($parentName === 'Query' || $parentName === 'Mutation') {
           $isObject = true;
@@ -66,7 +68,7 @@ function getSchema() {
           $isField = true;
           $className = "\ConfBooker\\".$parentName;
         } else {
-          print($resolverName.'-'.$parentName.":WTF??\n");
+          return $value;
         }
 
         if ($isMutation) {
@@ -77,7 +79,12 @@ function getSchema() {
             $className .= 'Query';
             $obj = $className::create()->findOneByPhone($args['phone']);
           } else {
-            $obj = new $className();
+            if (class_exists($className)) {
+              $obj = new $className();
+            } else {
+              $m = new \ConfBooker\Mutations;
+              return $m->$resolverName($args);
+            }
           }
           foreach($args['data'] as $field => $val){
             $fld = set($field);

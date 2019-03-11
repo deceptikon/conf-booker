@@ -2,41 +2,40 @@
 
 namespace ConfBooker\Base;
 
-use \DateTime;
 use \Exception;
 use \PDO;
 use ConfBooker\Conferences as ChildConferences;
 use ConfBooker\ConferencesQuery as ChildConferencesQuery;
+use ConfBooker\Participants as ChildParticipants;
 use ConfBooker\ParticipantsQuery as ChildParticipantsQuery;
-use ConfBooker\User as ChildUser;
-use ConfBooker\UserQuery as ChildUserQuery;
+use ConfBooker\Map\ConferencesTableMap;
 use ConfBooker\Map\ParticipantsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'participants' table.
+ * Base class that represents a row from the 'conferences' table.
  *
  *
  *
  * @package    propel.generator.ConfBooker.Base
  */
-abstract class Participants implements ActiveRecordInterface
+abstract class Conferences implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\ConfBooker\\Map\\ParticipantsTableMap';
+    const TABLE_MAP = '\\ConfBooker\\Map\\ConferencesTableMap';
 
 
     /**
@@ -73,36 +72,17 @@ abstract class Participants implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the date field.
+     * The value for the name field.
      *
-     * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
-     * @var        DateTime
+     * @var        string
      */
-    protected $date;
+    protected $name;
 
     /**
-     * The value for the user_id field.
-     *
-     * @var        int
+     * @var        ObjectCollection|ChildParticipants[] Collection to store aggregation of ChildParticipants objects.
      */
-    protected $user_id;
-
-    /**
-     * The value for the conf_id field.
-     *
-     * @var        int
-     */
-    protected $conf_id;
-
-    /**
-     * @var        ChildUser
-     */
-    protected $aUser;
-
-    /**
-     * @var        ChildConferences
-     */
-    protected $aConference;
+    protected $collParticipantss;
+    protected $collParticipantssPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -113,22 +93,16 @@ abstract class Participants implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildParticipants[]
      */
-    public function applyDefaultValues()
-    {
-    }
+    protected $participantssScheduledForDeletion = null;
 
     /**
-     * Initializes internal state of ConfBooker\Base\Participants object.
-     * @see applyDefaults()
+     * Initializes internal state of ConfBooker\Base\Conferences object.
      */
     public function __construct()
     {
-        $this->applyDefaultValues();
     }
 
     /**
@@ -220,9 +194,9 @@ abstract class Participants implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Participants</code> instance.  If
-     * <code>obj</code> is an instance of <code>Participants</code>, delegates to
-     * <code>equals(Participants)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Conferences</code> instance.  If
+     * <code>obj</code> is an instance of <code>Conferences</code>, delegates to
+     * <code>equals(Conferences)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -288,7 +262,7 @@ abstract class Participants implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Participants The current object, for fluid interface
+     * @return $this|Conferences The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -360,50 +334,20 @@ abstract class Participants implements ActiveRecordInterface
     }
 
     /**
-     * Get the [optionally formatted] temporal [date] column value.
+     * Get the [name] column value.
      *
-     *
-     * @param      string|null $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return string
      */
-    public function getDate($format = NULL)
+    public function getName()
     {
-        if ($format === null) {
-            return $this->date;
-        } else {
-            return $this->date instanceof \DateTimeInterface ? $this->date->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [user_id] column value.
-     *
-     * @return int
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * Get the [conf_id] column value.
-     *
-     * @return int
-     */
-    public function getConfId()
-    {
-        return $this->conf_id;
+        return $this->name;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\ConfBooker\Participants The current object (for fluent API support)
+     * @return $this|\ConfBooker\Conferences The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -413,79 +357,31 @@ abstract class Participants implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[ParticipantsTableMap::COL_ID] = true;
+            $this->modifiedColumns[ConferencesTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Sets the value of [date] column to a normalized version of the date/time value specified.
+     * Set the value of [name] column.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\ConfBooker\Participants The current object (for fluent API support)
+     * @param string $v new value
+     * @return $this|\ConfBooker\Conferences The current object (for fluent API support)
      */
-    public function setDate($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->date !== null || $dt !== null) {
-            if ($this->date === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->date->format("Y-m-d H:i:s.u")) {
-                $this->date = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ParticipantsTableMap::COL_DATE] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setDate()
-
-    /**
-     * Set the value of [user_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\ConfBooker\Participants The current object (for fluent API support)
-     */
-    public function setUserId($v)
+    public function setName($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->user_id !== $v) {
-            $this->user_id = $v;
-            $this->modifiedColumns[ParticipantsTableMap::COL_USER_ID] = true;
-        }
-
-        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-            $this->aUser = null;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[ConferencesTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setUserId()
-
-    /**
-     * Set the value of [conf_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\ConfBooker\Participants The current object (for fluent API support)
-     */
-    public function setConfId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->conf_id !== $v) {
-            $this->conf_id = $v;
-            $this->modifiedColumns[ParticipantsTableMap::COL_CONF_ID] = true;
-        }
-
-        if ($this->aConference !== null && $this->aConference->getId() !== $v) {
-            $this->aConference = null;
-        }
-
-        return $this;
-    } // setConfId()
+    } // setName()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -523,20 +419,11 @@ abstract class Participants implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ParticipantsTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ConferencesTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ParticipantsTableMap::translateFieldName('Date', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->date = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ParticipantsTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->user_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ParticipantsTableMap::translateFieldName('ConfId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->conf_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ConferencesTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -545,10 +432,10 @@ abstract class Participants implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = ParticipantsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = ConferencesTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\ConfBooker\\Participants'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\ConfBooker\\Conferences'), 0, $e);
         }
     }
 
@@ -567,12 +454,6 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-            $this->aUser = null;
-        }
-        if ($this->aConference !== null && $this->conf_id !== $this->aConference->getId()) {
-            $this->aConference = null;
-        }
     } // ensureConsistency
 
     /**
@@ -596,13 +477,13 @@ abstract class Participants implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ParticipantsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ConferencesTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildParticipantsQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildConferencesQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -612,8 +493,8 @@ abstract class Participants implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
-            $this->aConference = null;
+            $this->collParticipantss = null;
+
         } // if (deep)
     }
 
@@ -623,8 +504,8 @@ abstract class Participants implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Participants::setDeleted()
-     * @see Participants::isDeleted()
+     * @see Conferences::setDeleted()
+     * @see Conferences::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -633,11 +514,11 @@ abstract class Participants implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ParticipantsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ConferencesTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildParticipantsQuery::create()
+            $deleteQuery = ChildConferencesQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -672,7 +553,7 @@ abstract class Participants implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ParticipantsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ConferencesTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -691,7 +572,7 @@ abstract class Participants implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ParticipantsTableMap::addInstanceToPool($this);
+                ConferencesTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -717,25 +598,6 @@ abstract class Participants implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
-            if ($this->aConference !== null) {
-                if ($this->aConference->isModified() || $this->aConference->isNew()) {
-                    $affectedRows += $this->aConference->save($con);
-                }
-                $this->setConference($this->aConference);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -745,6 +607,23 @@ abstract class Participants implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->participantssScheduledForDeletion !== null) {
+                if (!$this->participantssScheduledForDeletion->isEmpty()) {
+                    \ConfBooker\ParticipantsQuery::create()
+                        ->filterByPrimaryKeys($this->participantssScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->participantssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collParticipantss !== null) {
+                foreach ($this->collParticipantss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -767,27 +646,21 @@ abstract class Participants implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ParticipantsTableMap::COL_ID] = true;
+        $this->modifiedColumns[ConferencesTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ParticipantsTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ConferencesTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ParticipantsTableMap::COL_ID)) {
+        if ($this->isColumnModified(ConferencesTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = '`id`';
         }
-        if ($this->isColumnModified(ParticipantsTableMap::COL_DATE)) {
-            $modifiedColumns[':p' . $index++]  = '`date`';
-        }
-        if ($this->isColumnModified(ParticipantsTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = '`user_id`';
-        }
-        if ($this->isColumnModified(ParticipantsTableMap::COL_CONF_ID)) {
-            $modifiedColumns[':p' . $index++]  = '`conf_id`';
+        if ($this->isColumnModified(ConferencesTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = '`name`';
         }
 
         $sql = sprintf(
-            'INSERT INTO `participants` (%s) VALUES (%s)',
+            'INSERT INTO `conferences` (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -799,14 +672,8 @@ abstract class Participants implements ActiveRecordInterface
                     case '`id`':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case '`date`':
-                        $stmt->bindValue($identifier, $this->date ? $this->date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case '`user_id`':
-                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
-                        break;
-                    case '`conf_id`':
-                        $stmt->bindValue($identifier, $this->conf_id, PDO::PARAM_INT);
+                    case '`name`':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -854,7 +721,7 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ParticipantsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ConferencesTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -874,13 +741,7 @@ abstract class Participants implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getDate();
-                break;
-            case 2:
-                return $this->getUserId();
-                break;
-            case 3:
-                return $this->getConfId();
+                return $this->getName();
                 break;
             default:
                 return null;
@@ -906,56 +767,35 @@ abstract class Participants implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Participants'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Conferences'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Participants'][$this->hashCode()] = true;
-        $keys = ParticipantsTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Conferences'][$this->hashCode()] = true;
+        $keys = ConferencesTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getDate(),
-            $keys[2] => $this->getUserId(),
-            $keys[3] => $this->getConfId(),
+            $keys[1] => $this->getName(),
         );
-        if ($result[$keys[1]] instanceof \DateTimeInterface) {
-            $result[$keys[1]] = $result[$keys[1]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
+            if (null !== $this->collParticipantss) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'user';
+                        $key = 'participantss';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'users';
+                        $key = 'participantss';
                         break;
                     default:
-                        $key = 'User';
+                        $key = 'Participantss';
                 }
 
-                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aConference) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'conferences';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'conferences';
-                        break;
-                    default:
-                        $key = 'Conference';
-                }
-
-                $result[$key] = $this->aConference->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->collParticipantss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -971,11 +811,11 @@ abstract class Participants implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\ConfBooker\Participants
+     * @return $this|\ConfBooker\Conferences
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ParticipantsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ConferencesTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -986,7 +826,7 @@ abstract class Participants implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\ConfBooker\Participants
+     * @return $this|\ConfBooker\Conferences
      */
     public function setByPosition($pos, $value)
     {
@@ -995,13 +835,7 @@ abstract class Participants implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setDate($value);
-                break;
-            case 2:
-                $this->setUserId($value);
-                break;
-            case 3:
-                $this->setConfId($value);
+                $this->setName($value);
                 break;
         } // switch()
 
@@ -1027,19 +861,13 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ParticipantsTableMap::getFieldNames($keyType);
+        $keys = ConferencesTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setDate($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setUserId($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setConfId($arr[$keys[3]]);
+            $this->setName($arr[$keys[1]]);
         }
     }
 
@@ -1060,7 +888,7 @@ abstract class Participants implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\ConfBooker\Participants The current object, for fluid interface
+     * @return $this|\ConfBooker\Conferences The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1080,19 +908,13 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ParticipantsTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ConferencesTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ParticipantsTableMap::COL_ID)) {
-            $criteria->add(ParticipantsTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(ConferencesTableMap::COL_ID)) {
+            $criteria->add(ConferencesTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ParticipantsTableMap::COL_DATE)) {
-            $criteria->add(ParticipantsTableMap::COL_DATE, $this->date);
-        }
-        if ($this->isColumnModified(ParticipantsTableMap::COL_USER_ID)) {
-            $criteria->add(ParticipantsTableMap::COL_USER_ID, $this->user_id);
-        }
-        if ($this->isColumnModified(ParticipantsTableMap::COL_CONF_ID)) {
-            $criteria->add(ParticipantsTableMap::COL_CONF_ID, $this->conf_id);
+        if ($this->isColumnModified(ConferencesTableMap::COL_NAME)) {
+            $criteria->add(ConferencesTableMap::COL_NAME, $this->name);
         }
 
         return $criteria;
@@ -1110,10 +932,8 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildParticipantsQuery::create();
-        $criteria->add(ParticipantsTableMap::COL_ID, $this->id);
-        $criteria->add(ParticipantsTableMap::COL_USER_ID, $this->user_id);
-        $criteria->add(ParticipantsTableMap::COL_CONF_ID, $this->conf_id);
+        $criteria = ChildConferencesQuery::create();
+        $criteria->add(ConferencesTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1126,26 +946,10 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId() &&
-            null !== $this->getUserId() &&
-            null !== $this->getConfId();
+        $validPk = null !== $this->getId();
 
-        $validPrimaryKeyFKs = 2;
+        $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
-
-        //relation participants_fk_69bd79 to table users
-        if ($this->aUser && $hash = spl_object_hash($this->aUser)) {
-            $primaryKeyFKs[] = $hash;
-        } else {
-            $validPrimaryKeyFKs = false;
-        }
-
-        //relation participants_fk_2bf1ae to table conferences
-        if ($this->aConference && $hash = spl_object_hash($this->aConference)) {
-            $primaryKeyFKs[] = $hash;
-        } else {
-            $validPrimaryKeyFKs = false;
-        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1157,31 +961,23 @@ abstract class Participants implements ActiveRecordInterface
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return array
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-        $pks[0] = $this->getId();
-        $pks[1] = $this->getUserId();
-        $pks[2] = $this->getConfId();
-
-        return $pks;
+        return $this->getId();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (id column).
      *
-     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @param       int $key Primary key.
      * @return void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-        $this->setId($keys[0]);
-        $this->setUserId($keys[1]);
-        $this->setConfId($keys[2]);
+        $this->setId($key);
     }
 
     /**
@@ -1190,7 +986,7 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return (null === $this->getId()) && (null === $this->getUserId()) && (null === $this->getConfId());
+        return null === $this->getId();
     }
 
     /**
@@ -1199,16 +995,28 @@ abstract class Participants implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \ConfBooker\Participants (or compatible) type.
+     * @param      object $copyObj An object of \ConfBooker\Conferences (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setDate($this->getDate());
-        $copyObj->setUserId($this->getUserId());
-        $copyObj->setConfId($this->getConfId());
+        $copyObj->setName($this->getName());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getParticipantss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addParticipants($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1224,7 +1032,7 @@ abstract class Participants implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \ConfBooker\Participants Clone of current object.
+     * @return \ConfBooker\Conferences Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1237,106 +1045,274 @@ abstract class Participants implements ActiveRecordInterface
         return $copyObj;
     }
 
+
     /**
-     * Declares an association between this object and a ChildUser object.
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
      *
-     * @param  ChildUser $v
-     * @return $this|\ConfBooker\Participants The current object (for fluent API support)
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Participants' == $relationName) {
+            $this->initParticipantss();
+            return;
+        }
+    }
+
+    /**
+     * Clears out the collParticipantss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addParticipantss()
+     */
+    public function clearParticipantss()
+    {
+        $this->collParticipantss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collParticipantss collection loaded partially.
+     */
+    public function resetPartialParticipantss($v = true)
+    {
+        $this->collParticipantssPartial = $v;
+    }
+
+    /**
+     * Initializes the collParticipantss collection.
+     *
+     * By default this just sets the collParticipantss collection to an empty array (like clearcollParticipantss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initParticipantss($overrideExisting = true)
+    {
+        if (null !== $this->collParticipantss && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = ParticipantsTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collParticipantss = new $collectionClassName;
+        $this->collParticipantss->setModel('\ConfBooker\Participants');
+    }
+
+    /**
+     * Gets an array of ChildParticipants objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildConferences is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildParticipants[] List of ChildParticipants objects
      * @throws PropelException
      */
-    public function setUser(ChildUser $v = null)
+    public function getParticipantss(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        if ($v === null) {
-            $this->setUserId(NULL);
-        } else {
-            $this->setUserId($v->getId());
+        $partial = $this->collParticipantssPartial && !$this->isNew();
+        if (null === $this->collParticipantss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collParticipantss) {
+                // return empty collection
+                $this->initParticipantss();
+            } else {
+                $collParticipantss = ChildParticipantsQuery::create(null, $criteria)
+                    ->filterByConference($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collParticipantssPartial && count($collParticipantss)) {
+                        $this->initParticipantss(false);
+
+                        foreach ($collParticipantss as $obj) {
+                            if (false == $this->collParticipantss->contains($obj)) {
+                                $this->collParticipantss->append($obj);
+                            }
+                        }
+
+                        $this->collParticipantssPartial = true;
+                    }
+
+                    return $collParticipantss;
+                }
+
+                if ($partial && $this->collParticipantss) {
+                    foreach ($this->collParticipantss as $obj) {
+                        if ($obj->isNew()) {
+                            $collParticipantss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collParticipantss = $collParticipantss;
+                $this->collParticipantssPartial = false;
+            }
         }
 
-        $this->aUser = $v;
+        return $this->collParticipantss;
+    }
 
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildUser object, it will not be re-added.
-        if ($v !== null) {
-            $v->addParticipants($this);
+    /**
+     * Sets a collection of ChildParticipants objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $participantss A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildConferences The current object (for fluent API support)
+     */
+    public function setParticipantss(Collection $participantss, ConnectionInterface $con = null)
+    {
+        /** @var ChildParticipants[] $participantssToDelete */
+        $participantssToDelete = $this->getParticipantss(new Criteria(), $con)->diff($participantss);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->participantssScheduledForDeletion = clone $participantssToDelete;
+
+        foreach ($participantssToDelete as $participantsRemoved) {
+            $participantsRemoved->setConference(null);
         }
 
+        $this->collParticipantss = null;
+        foreach ($participantss as $participants) {
+            $this->addParticipants($participants);
+        }
+
+        $this->collParticipantss = $participantss;
+        $this->collParticipantssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Participants objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Participants objects.
+     * @throws PropelException
+     */
+    public function countParticipantss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collParticipantssPartial && !$this->isNew();
+        if (null === $this->collParticipantss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collParticipantss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getParticipantss());
+            }
+
+            $query = ChildParticipantsQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByConference($this)
+                ->count($con);
+        }
+
+        return count($this->collParticipantss);
+    }
+
+    /**
+     * Method called to associate a ChildParticipants object to this object
+     * through the ChildParticipants foreign key attribute.
+     *
+     * @param  ChildParticipants $l ChildParticipants
+     * @return $this|\ConfBooker\Conferences The current object (for fluent API support)
+     */
+    public function addParticipants(ChildParticipants $l)
+    {
+        if ($this->collParticipantss === null) {
+            $this->initParticipantss();
+            $this->collParticipantssPartial = true;
+        }
+
+        if (!$this->collParticipantss->contains($l)) {
+            $this->doAddParticipants($l);
+
+            if ($this->participantssScheduledForDeletion and $this->participantssScheduledForDeletion->contains($l)) {
+                $this->participantssScheduledForDeletion->remove($this->participantssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildParticipants $participants The ChildParticipants object to add.
+     */
+    protected function doAddParticipants(ChildParticipants $participants)
+    {
+        $this->collParticipantss[]= $participants;
+        $participants->setConference($this);
+    }
+
+    /**
+     * @param  ChildParticipants $participants The ChildParticipants object to remove.
+     * @return $this|ChildConferences The current object (for fluent API support)
+     */
+    public function removeParticipants(ChildParticipants $participants)
+    {
+        if ($this->getParticipantss()->contains($participants)) {
+            $pos = $this->collParticipantss->search($participants);
+            $this->collParticipantss->remove($pos);
+            if (null === $this->participantssScheduledForDeletion) {
+                $this->participantssScheduledForDeletion = clone $this->collParticipantss;
+                $this->participantssScheduledForDeletion->clear();
+            }
+            $this->participantssScheduledForDeletion[]= clone $participants;
+            $participants->setConference(null);
+        }
 
         return $this;
     }
 
 
     /**
-     * Get the associated ChildUser object
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Conferences is new, it will return
+     * an empty collection; or if this Conferences has previously
+     * been saved, it will retrieve related Participantss from storage.
      *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildUser The associated ChildUser object.
-     * @throws PropelException
-     */
-    public function getUser(ConnectionInterface $con = null)
-    {
-        if ($this->aUser === null && ($this->user_id != 0)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addParticipantss($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
-     * Declares an association between this object and a ChildConferences object.
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Conferences.
      *
-     * @param  ChildConferences $v
-     * @return $this|\ConfBooker\Participants The current object (for fluent API support)
-     * @throws PropelException
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildParticipants[] List of ChildParticipants objects
      */
-    public function setConference(ChildConferences $v = null)
+    public function getParticipantssJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        if ($v === null) {
-            $this->setConfId(NULL);
-        } else {
-            $this->setConfId($v->getId());
-        }
+        $query = ChildParticipantsQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
 
-        $this->aConference = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildConferences object, it will not be re-added.
-        if ($v !== null) {
-            $v->addParticipants($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildConferences object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildConferences The associated ChildConferences object.
-     * @throws PropelException
-     */
-    public function getConference(ConnectionInterface $con = null)
-    {
-        if ($this->aConference === null && ($this->conf_id != 0)) {
-            $this->aConference = ChildConferencesQuery::create()->findPk($this->conf_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aConference->addParticipantss($this);
-             */
-        }
-
-        return $this->aConference;
+        return $this->getParticipantss($query, $con);
     }
 
     /**
@@ -1346,19 +1322,10 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aUser) {
-            $this->aUser->removeParticipants($this);
-        }
-        if (null !== $this->aConference) {
-            $this->aConference->removeParticipants($this);
-        }
         $this->id = null;
-        $this->date = null;
-        $this->user_id = null;
-        $this->conf_id = null;
+        $this->name = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1375,10 +1342,14 @@ abstract class Participants implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collParticipantss) {
+                foreach ($this->collParticipantss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
-        $this->aUser = null;
-        $this->aConference = null;
+        $this->collParticipantss = null;
     }
 
     /**
@@ -1388,7 +1359,7 @@ abstract class Participants implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ParticipantsTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ConferencesTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

@@ -78,9 +78,22 @@
 
     <table name="participants">
       <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-      <column name="name" type="VARCHAR" size="32"/>
+      <column name="date" type="timestamp" defaultExpr="CURRENT_TIMESTAMP" required="true"/>
+      <column name="user_id" type="INTEGER" primaryKey="true"/>
+      <column name="conf_id" type="INTEGER" primaryKey="true"/>
+      <foreign-key foreignTable="users" phpName="User">
+        <reference local="user_id" foreign="id"/>
+      </foreign-key>
+      <foreign-key foreignTable="conferences" phpName="Conference">
+        <reference local="conf_id" foreign="id"/>
+      </foreign-key>
     </table>
 
+    <table name="conferences">
+      <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+      <column name="name" type="VARCHAR" size="255"/>
+    </table>
+    
     <table name="specialities">
       <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
       <column name="name" type="VARCHAR" size="32"/>

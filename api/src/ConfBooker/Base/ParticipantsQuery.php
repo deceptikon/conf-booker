@@ -10,6 +10,7 @@ use ConfBooker\Map\ParticipantsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -20,10 +21,14 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildParticipantsQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildParticipantsQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildParticipantsQuery orderByDate($order = Criteria::ASC) Order by the date column
+ * @method     ChildParticipantsQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildParticipantsQuery orderByConfId($order = Criteria::ASC) Order by the conf_id column
  *
  * @method     ChildParticipantsQuery groupById() Group by the id column
- * @method     ChildParticipantsQuery groupByName() Group by the name column
+ * @method     ChildParticipantsQuery groupByDate() Group by the date column
+ * @method     ChildParticipantsQuery groupByUserId() Group by the user_id column
+ * @method     ChildParticipantsQuery groupByConfId() Group by the conf_id column
  *
  * @method     ChildParticipantsQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildParticipantsQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -33,21 +38,49 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildParticipantsQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildParticipantsQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildParticipantsQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildParticipantsQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildParticipantsQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ *
+ * @method     ChildParticipantsQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
+ *
+ * @method     ChildParticipantsQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
+ * @method     ChildParticipantsQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
+ * @method     ChildParticipantsQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
+ *
+ * @method     ChildParticipantsQuery leftJoinConference($relationAlias = null) Adds a LEFT JOIN clause to the query using the Conference relation
+ * @method     ChildParticipantsQuery rightJoinConference($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Conference relation
+ * @method     ChildParticipantsQuery innerJoinConference($relationAlias = null) Adds a INNER JOIN clause to the query using the Conference relation
+ *
+ * @method     ChildParticipantsQuery joinWithConference($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Conference relation
+ *
+ * @method     ChildParticipantsQuery leftJoinWithConference() Adds a LEFT JOIN clause and with to the query using the Conference relation
+ * @method     ChildParticipantsQuery rightJoinWithConference() Adds a RIGHT JOIN clause and with to the query using the Conference relation
+ * @method     ChildParticipantsQuery innerJoinWithConference() Adds a INNER JOIN clause and with to the query using the Conference relation
+ *
+ * @method     \ConfBooker\UserQuery|\ConfBooker\ConferencesQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildParticipants findOne(ConnectionInterface $con = null) Return the first ChildParticipants matching the query
  * @method     ChildParticipants findOneOrCreate(ConnectionInterface $con = null) Return the first ChildParticipants matching the query, or a new ChildParticipants object populated from the query conditions when no match is found
  *
  * @method     ChildParticipants findOneById(int $id) Return the first ChildParticipants filtered by the id column
- * @method     ChildParticipants findOneByName(string $name) Return the first ChildParticipants filtered by the name column *
+ * @method     ChildParticipants findOneByDate(string $date) Return the first ChildParticipants filtered by the date column
+ * @method     ChildParticipants findOneByUserId(int $user_id) Return the first ChildParticipants filtered by the user_id column
+ * @method     ChildParticipants findOneByConfId(int $conf_id) Return the first ChildParticipants filtered by the conf_id column *
 
  * @method     ChildParticipants requirePk($key, ConnectionInterface $con = null) Return the ChildParticipants by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildParticipants requireOne(ConnectionInterface $con = null) Return the first ChildParticipants matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildParticipants requireOneById(int $id) Return the first ChildParticipants filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildParticipants requireOneByName(string $name) Return the first ChildParticipants filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildParticipants requireOneByDate(string $date) Return the first ChildParticipants filtered by the date column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildParticipants requireOneByUserId(int $user_id) Return the first ChildParticipants filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildParticipants requireOneByConfId(int $conf_id) Return the first ChildParticipants filtered by the conf_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildParticipants[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildParticipants objects based on current ModelCriteria
  * @method     ChildParticipants[]|ObjectCollection findById(int $id) Return ChildParticipants objects filtered by the id column
- * @method     ChildParticipants[]|ObjectCollection findByName(string $name) Return ChildParticipants objects filtered by the name column
+ * @method     ChildParticipants[]|ObjectCollection findByDate(string $date) Return ChildParticipants objects filtered by the date column
+ * @method     ChildParticipants[]|ObjectCollection findByUserId(int $user_id) Return ChildParticipants objects filtered by the user_id column
+ * @method     ChildParticipants[]|ObjectCollection findByConfId(int $conf_id) Return ChildParticipants objects filtered by the conf_id column
  * @method     ChildParticipants[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -97,10 +130,10 @@ abstract class ParticipantsQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj  = $c->findPk(12, $con);
+     * $obj = $c->findPk(array(12, 34, 56), $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param array[$id, $user_id, $conf_id] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildParticipants|array|mixed the result, formatted by the current formatter
@@ -125,7 +158,7 @@ abstract class ParticipantsQuery extends ModelCriteria
             return $this->findPkComplex($key, $con);
         }
 
-        if ((null !== ($obj = ParticipantsTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+        if ((null !== ($obj = ParticipantsTableMap::getInstanceFromPool(serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1]), (null === $key[2] || is_scalar($key[2]) || is_callable([$key[2], '__toString']) ? (string) $key[2] : $key[2])]))))) {
             // the object is already in the instance pool
             return $obj;
         }
@@ -146,10 +179,12 @@ abstract class ParticipantsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT `id`, `name` FROM `participants` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `date`, `user_id`, `conf_id` FROM `participants` WHERE `id` = :p0 AND `user_id` = :p1 AND `conf_id` = :p2';
         try {
             $stmt = $con->prepare($sql);
-            $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
+            $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
+            $stmt->bindValue(':p2', $key[2], PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -160,7 +195,7 @@ abstract class ParticipantsQuery extends ModelCriteria
             /** @var ChildParticipants $obj */
             $obj = new ChildParticipants();
             $obj->hydrate($row);
-            ParticipantsTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
+            ParticipantsTableMap::addInstanceToPool($obj, serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1]), (null === $key[2] || is_scalar($key[2]) || is_callable([$key[2], '__toString']) ? (string) $key[2] : $key[2])]));
         }
         $stmt->closeCursor();
 
@@ -189,7 +224,7 @@ abstract class ParticipantsQuery extends ModelCriteria
     /**
      * Find objects by primary key
      * <code>
-     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
      * @param     ConnectionInterface $con an optional connection object
@@ -219,8 +254,11 @@ abstract class ParticipantsQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
+        $this->addUsingAlias(ParticipantsTableMap::COL_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(ParticipantsTableMap::COL_USER_ID, $key[1], Criteria::EQUAL);
+        $this->addUsingAlias(ParticipantsTableMap::COL_CONF_ID, $key[2], Criteria::EQUAL);
 
-        return $this->addUsingAlias(ParticipantsTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this;
     }
 
     /**
@@ -232,8 +270,19 @@ abstract class ParticipantsQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(ParticipantsTableMap::COL_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(ParticipantsTableMap::COL_USER_ID, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $cton2 = $this->getNewCriterion(ParticipantsTableMap::COL_CONF_ID, $key[2], Criteria::EQUAL);
+            $cton0->addAnd($cton2);
+            $this->addOr($cton0);
+        }
 
-        return $this->addUsingAlias(ParticipantsTableMap::COL_ID, $keys, Criteria::IN);
+        return $this;
     }
 
     /**
@@ -278,28 +327,286 @@ abstract class ParticipantsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the name column
+     * Filter the query on the date column
      *
      * Example usage:
      * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
+     * $query->filterByDate('2011-03-14'); // WHERE date = '2011-03-14'
+     * $query->filterByDate('now'); // WHERE date = '2011-03-14'
+     * $query->filterByDate(array('max' => 'yesterday')); // WHERE date > '2011-03-13'
      * </code>
      *
-     * @param     string $name The value to use as filter.
+     * @param     mixed $date The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildParticipantsQuery The current query, for fluid interface
      */
-    public function filterByName($name = null, $comparison = null)
+    public function filterByDate($date = null, $comparison = null)
     {
-        if (null === $comparison) {
-            if (is_array($name)) {
+        if (is_array($date)) {
+            $useMinMax = false;
+            if (isset($date['min'])) {
+                $this->addUsingAlias(ParticipantsTableMap::COL_DATE, $date['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($date['max'])) {
+                $this->addUsingAlias(ParticipantsTableMap::COL_DATE, $date['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(ParticipantsTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(ParticipantsTableMap::COL_DATE, $date, $comparison);
+    }
+
+    /**
+     * Filter the query on the user_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUserId(1234); // WHERE user_id = 1234
+     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
+     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
+     * </code>
+     *
+     * @see       filterByUser()
+     *
+     * @param     mixed $userId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildParticipantsQuery The current query, for fluid interface
+     */
+    public function filterByUserId($userId = null, $comparison = null)
+    {
+        if (is_array($userId)) {
+            $useMinMax = false;
+            if (isset($userId['min'])) {
+                $this->addUsingAlias(ParticipantsTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($userId['max'])) {
+                $this->addUsingAlias(ParticipantsTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ParticipantsTableMap::COL_USER_ID, $userId, $comparison);
+    }
+
+    /**
+     * Filter the query on the conf_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByConfId(1234); // WHERE conf_id = 1234
+     * $query->filterByConfId(array(12, 34)); // WHERE conf_id IN (12, 34)
+     * $query->filterByConfId(array('min' => 12)); // WHERE conf_id > 12
+     * </code>
+     *
+     * @see       filterByConference()
+     *
+     * @param     mixed $confId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildParticipantsQuery The current query, for fluid interface
+     */
+    public function filterByConfId($confId = null, $comparison = null)
+    {
+        if (is_array($confId)) {
+            $useMinMax = false;
+            if (isset($confId['min'])) {
+                $this->addUsingAlias(ParticipantsTableMap::COL_CONF_ID, $confId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($confId['max'])) {
+                $this->addUsingAlias(ParticipantsTableMap::COL_CONF_ID, $confId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ParticipantsTableMap::COL_CONF_ID, $confId, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \ConfBooker\User object
+     *
+     * @param \ConfBooker\User|ObjectCollection $user The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildParticipantsQuery The current query, for fluid interface
+     */
+    public function filterByUser($user, $comparison = null)
+    {
+        if ($user instanceof \ConfBooker\User) {
+            return $this
+                ->addUsingAlias(ParticipantsTableMap::COL_USER_ID, $user->getId(), $comparison);
+        } elseif ($user instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ParticipantsTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByUser() only accepts arguments of type \ConfBooker\User or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the User relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildParticipantsQuery The current query, for fluid interface
+     */
+    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('User');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'User');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the User relation User object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \ConfBooker\UserQuery A secondary query class using the current class as primary query
+     */
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', '\ConfBooker\UserQuery');
+    }
+
+    /**
+     * Filter the query by a related \ConfBooker\Conferences object
+     *
+     * @param \ConfBooker\Conferences|ObjectCollection $conferences The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildParticipantsQuery The current query, for fluid interface
+     */
+    public function filterByConference($conferences, $comparison = null)
+    {
+        if ($conferences instanceof \ConfBooker\Conferences) {
+            return $this
+                ->addUsingAlias(ParticipantsTableMap::COL_CONF_ID, $conferences->getId(), $comparison);
+        } elseif ($conferences instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ParticipantsTableMap::COL_CONF_ID, $conferences->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByConference() only accepts arguments of type \ConfBooker\Conferences or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Conference relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildParticipantsQuery The current query, for fluid interface
+     */
+    public function joinConference($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Conference');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Conference');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Conference relation Conferences object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \ConfBooker\ConferencesQuery A secondary query class using the current class as primary query
+     */
+    public function useConferenceQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinConference($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Conference', '\ConfBooker\ConferencesQuery');
     }
 
     /**
@@ -312,7 +619,10 @@ abstract class ParticipantsQuery extends ModelCriteria
     public function prune($participants = null)
     {
         if ($participants) {
-            $this->addUsingAlias(ParticipantsTableMap::COL_ID, $participants->getId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond0', $this->getAliasedColName(ParticipantsTableMap::COL_ID), $participants->getId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(ParticipantsTableMap::COL_USER_ID), $participants->getUserId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond2', $this->getAliasedColName(ParticipantsTableMap::COL_CONF_ID), $participants->getConfId(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1', 'pruneCond2'), Criteria::LOGICAL_OR);
         }
 
         return $this;

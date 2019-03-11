@@ -5,6 +5,8 @@ namespace ConfBooker\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use ConfBooker\Participants as ChildParticipants;
+use ConfBooker\ParticipantsQuery as ChildParticipantsQuery;
 use ConfBooker\Specialities as ChildSpecialities;
 use ConfBooker\SpecialitiesQuery as ChildSpecialitiesQuery;
 use ConfBooker\User as ChildUser;
@@ -13,6 +15,7 @@ use ConfBooker\UserFilesQuery as ChildUserFilesQuery;
 use ConfBooker\UserQuery as ChildUserQuery;
 use ConfBooker\UserSpeciality as ChildUserSpeciality;
 use ConfBooker\UserSpecialityQuery as ChildUserSpecialityQuery;
+use ConfBooker\Map\ParticipantsTableMap;
 use ConfBooker\Map\UserSpecialityTableMap;
 use ConfBooker\Map\UserTableMap;
 use Propel\Runtime\Propel;
@@ -164,6 +167,12 @@ abstract class User implements ActiveRecordInterface
     protected $data;
 
     /**
+     * @var        ObjectCollection|ChildParticipants[] Collection to store aggregation of ChildParticipants objects.
+     */
+    protected $collParticipantss;
+    protected $collParticipantssPartial;
+
+    /**
      * @var        ObjectCollection|ChildUserSpeciality[] Collection to store aggregation of ChildUserSpeciality objects.
      */
     protected $collUserSpecialities;
@@ -197,6 +206,12 @@ abstract class User implements ActiveRecordInterface
      * @var ObjectCollection|ChildSpecialities[]
      */
     protected $specialitiessScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildParticipants[]
+     */
+    protected $participantssScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -1010,6 +1025,8 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collParticipantss = null;
+
             $this->collUserSpecialities = null;
 
             $this->singleUserFiles = null;
@@ -1157,6 +1174,23 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
+
+            if ($this->participantssScheduledForDeletion !== null) {
+                if (!$this->participantssScheduledForDeletion->isEmpty()) {
+                    \ConfBooker\ParticipantsQuery::create()
+                        ->filterByPrimaryKeys($this->participantssScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->participantssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collParticipantss !== null) {
+                foreach ($this->collParticipantss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
 
             if ($this->userSpecialitiesScheduledForDeletion !== null) {
                 if (!$this->userSpecialitiesScheduledForDeletion->isEmpty()) {
@@ -1451,6 +1485,21 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collParticipantss) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'participantss';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'participantss';
+                        break;
+                    default:
+                        $key = 'Participantss';
+                }
+
+                $result[$key] = $this->collParticipantss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collUserSpecialities) {
 
                 switch ($keyType) {
@@ -1803,6 +1852,12 @@ abstract class User implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
+            foreach ($this->getParticipantss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addParticipants($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getUserSpecialities() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addUserSpeciality($relObj->copy($deepCopy));
@@ -1855,10 +1910,267 @@ abstract class User implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('Participants' == $relationName) {
+            $this->initParticipantss();
+            return;
+        }
         if ('UserSpeciality' == $relationName) {
             $this->initUserSpecialities();
             return;
         }
+    }
+
+    /**
+     * Clears out the collParticipantss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addParticipantss()
+     */
+    public function clearParticipantss()
+    {
+        $this->collParticipantss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collParticipantss collection loaded partially.
+     */
+    public function resetPartialParticipantss($v = true)
+    {
+        $this->collParticipantssPartial = $v;
+    }
+
+    /**
+     * Initializes the collParticipantss collection.
+     *
+     * By default this just sets the collParticipantss collection to an empty array (like clearcollParticipantss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initParticipantss($overrideExisting = true)
+    {
+        if (null !== $this->collParticipantss && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = ParticipantsTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collParticipantss = new $collectionClassName;
+        $this->collParticipantss->setModel('\ConfBooker\Participants');
+    }
+
+    /**
+     * Gets an array of ChildParticipants objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildParticipants[] List of ChildParticipants objects
+     * @throws PropelException
+     */
+    public function getParticipantss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collParticipantssPartial && !$this->isNew();
+        if (null === $this->collParticipantss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collParticipantss) {
+                // return empty collection
+                $this->initParticipantss();
+            } else {
+                $collParticipantss = ChildParticipantsQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collParticipantssPartial && count($collParticipantss)) {
+                        $this->initParticipantss(false);
+
+                        foreach ($collParticipantss as $obj) {
+                            if (false == $this->collParticipantss->contains($obj)) {
+                                $this->collParticipantss->append($obj);
+                            }
+                        }
+
+                        $this->collParticipantssPartial = true;
+                    }
+
+                    return $collParticipantss;
+                }
+
+                if ($partial && $this->collParticipantss) {
+                    foreach ($this->collParticipantss as $obj) {
+                        if ($obj->isNew()) {
+                            $collParticipantss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collParticipantss = $collParticipantss;
+                $this->collParticipantssPartial = false;
+            }
+        }
+
+        return $this->collParticipantss;
+    }
+
+    /**
+     * Sets a collection of ChildParticipants objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $participantss A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setParticipantss(Collection $participantss, ConnectionInterface $con = null)
+    {
+        /** @var ChildParticipants[] $participantssToDelete */
+        $participantssToDelete = $this->getParticipantss(new Criteria(), $con)->diff($participantss);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->participantssScheduledForDeletion = clone $participantssToDelete;
+
+        foreach ($participantssToDelete as $participantsRemoved) {
+            $participantsRemoved->setUser(null);
+        }
+
+        $this->collParticipantss = null;
+        foreach ($participantss as $participants) {
+            $this->addParticipants($participants);
+        }
+
+        $this->collParticipantss = $participantss;
+        $this->collParticipantssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Participants objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Participants objects.
+     * @throws PropelException
+     */
+    public function countParticipantss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collParticipantssPartial && !$this->isNew();
+        if (null === $this->collParticipantss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collParticipantss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getParticipantss());
+            }
+
+            $query = ChildParticipantsQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collParticipantss);
+    }
+
+    /**
+     * Method called to associate a ChildParticipants object to this object
+     * through the ChildParticipants foreign key attribute.
+     *
+     * @param  ChildParticipants $l ChildParticipants
+     * @return $this|\ConfBooker\User The current object (for fluent API support)
+     */
+    public function addParticipants(ChildParticipants $l)
+    {
+        if ($this->collParticipantss === null) {
+            $this->initParticipantss();
+            $this->collParticipantssPartial = true;
+        }
+
+        if (!$this->collParticipantss->contains($l)) {
+            $this->doAddParticipants($l);
+
+            if ($this->participantssScheduledForDeletion and $this->participantssScheduledForDeletion->contains($l)) {
+                $this->participantssScheduledForDeletion->remove($this->participantssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildParticipants $participants The ChildParticipants object to add.
+     */
+    protected function doAddParticipants(ChildParticipants $participants)
+    {
+        $this->collParticipantss[]= $participants;
+        $participants->setUser($this);
+    }
+
+    /**
+     * @param  ChildParticipants $participants The ChildParticipants object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeParticipants(ChildParticipants $participants)
+    {
+        if ($this->getParticipantss()->contains($participants)) {
+            $pos = $this->collParticipantss->search($participants);
+            $this->collParticipantss->remove($pos);
+            if (null === $this->participantssScheduledForDeletion) {
+                $this->participantssScheduledForDeletion = clone $this->collParticipantss;
+                $this->participantssScheduledForDeletion->clear();
+            }
+            $this->participantssScheduledForDeletion[]= clone $participants;
+            $participants->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Participantss from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildParticipants[] List of ChildParticipants objects
+     */
+    public function getParticipantssJoinConference(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildParticipantsQuery::create(null, $criteria);
+        $query->joinWith('Conference', $joinBehavior);
+
+        return $this->getParticipantss($query, $con);
     }
 
     /**
@@ -2432,6 +2744,11 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collParticipantss) {
+                foreach ($this->collParticipantss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collUserSpecialities) {
                 foreach ($this->collUserSpecialities as $o) {
                     $o->clearAllReferences($deep);
@@ -2447,6 +2764,7 @@ abstract class User implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collParticipantss = null;
         $this->collUserSpecialities = null;
         $this->singleUserFiles = null;
         $this->collSpecialitiess = null;

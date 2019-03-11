@@ -9,6 +9,11 @@ type Query {
 
 type Mutation {
     User(id: Int, data: UserInput!): User
+    newGuest(pin: Int!) : guestStatus
+}
+
+type guestStatus {
+  status: String
 }
 
 type User {

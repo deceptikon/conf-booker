@@ -56,6 +56,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildUserQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildUserQuery leftJoinParticipants($relationAlias = null) Adds a LEFT JOIN clause to the query using the Participants relation
+ * @method     ChildUserQuery rightJoinParticipants($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Participants relation
+ * @method     ChildUserQuery innerJoinParticipants($relationAlias = null) Adds a INNER JOIN clause to the query using the Participants relation
+ *
+ * @method     ChildUserQuery joinWithParticipants($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Participants relation
+ *
+ * @method     ChildUserQuery leftJoinWithParticipants() Adds a LEFT JOIN clause and with to the query using the Participants relation
+ * @method     ChildUserQuery rightJoinWithParticipants() Adds a RIGHT JOIN clause and with to the query using the Participants relation
+ * @method     ChildUserQuery innerJoinWithParticipants() Adds a INNER JOIN clause and with to the query using the Participants relation
+ *
  * @method     ChildUserQuery leftJoinUserSpeciality($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserSpeciality relation
  * @method     ChildUserQuery rightJoinUserSpeciality($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserSpeciality relation
  * @method     ChildUserQuery innerJoinUserSpeciality($relationAlias = null) Adds a INNER JOIN clause to the query using the UserSpeciality relation
@@ -76,7 +86,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithUserFiles() Adds a RIGHT JOIN clause and with to the query using the UserFiles relation
  * @method     ChildUserQuery innerJoinWithUserFiles() Adds a INNER JOIN clause and with to the query using the UserFiles relation
  *
- * @method     \ConfBooker\UserSpecialityQuery|\ConfBooker\UserFilesQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \ConfBooker\ParticipantsQuery|\ConfBooker\UserSpecialityQuery|\ConfBooker\UserFilesQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -689,6 +699,79 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_DATA, $data, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \ConfBooker\Participants object
+     *
+     * @param \ConfBooker\Participants|ObjectCollection $participants the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByParticipants($participants, $comparison = null)
+    {
+        if ($participants instanceof \ConfBooker\Participants) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $participants->getUserId(), $comparison);
+        } elseif ($participants instanceof ObjectCollection) {
+            return $this
+                ->useParticipantsQuery()
+                ->filterByPrimaryKeys($participants->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByParticipants() only accepts arguments of type \ConfBooker\Participants or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Participants relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinParticipants($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Participants');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Participants');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Participants relation Participants object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \ConfBooker\ParticipantsQuery A secondary query class using the current class as primary query
+     */
+    public function useParticipantsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinParticipants($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Participants', '\ConfBooker\ParticipantsQuery');
     }
 
     /**
