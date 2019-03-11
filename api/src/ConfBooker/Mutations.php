@@ -3,8 +3,14 @@ namespace ConfBooker;
 
 class GuestStatus {
   public $status;
+  public $name;
+
   function getStatus() {
     return $this->status;
+  }
+
+  function getName() {
+    return $this->name;
   }
 }
 
@@ -26,6 +32,7 @@ class Mutations {
       $guest->setConference($c);
       $guest->save();
       $s->status = "ok";
+      $s->name = $res->getFullname();
     } else {
       $s->status = 'not found';
     }
