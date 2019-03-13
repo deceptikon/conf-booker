@@ -12,6 +12,7 @@ const recordGuest = gql`
     newGuest(pin: $pin) {
       status
       name
+      isMember
     }
   }
 `
@@ -25,11 +26,12 @@ export const PinInput = (props) => (
 class ViewUsers extends Component {
   state = {
     pin: '',
+    isMember: false,
     showQr: false,
   };
 
-  submitPin = (e) => {
-    e.preventDefault();
+  submitPin = (e = null) => {
+    e && e.preventDefault();
     const pin = Number(this.state.pin.replace(/ /g, ''));
     this.setState({
       error: null,
@@ -48,12 +50,14 @@ class ViewUsers extends Component {
             this.setState({
               success: `Участник ${res.data.newGuest.name} подтвержден`,
               error: null,
+              isMember: res.data.newGuest.isMember,
               showQr: false,
               pin: '',
             });
           } else {
             this.setState({
               success: null,
+              isMember: false,
               error: "Гость не найден",
               showQr: false,
             });
@@ -63,15 +67,29 @@ class ViewUsers extends Component {
           console.error("BAD GUEST REQUEST: ", err);
         });
   }
+
+  successHandler = (pin) => {
+    console.log("Success Handler called: ", pin);
+    this.setState({ pin, showQr: false }, () => this.submitPin()); 
+  }
+
+  showIsMember = (isMember) => {
+    if(isMember) { 
+      return (<div style={{fontSize: '35px', color: 'teal' }}>✔</div>)
+    } else {
+      return <small style={{color: 'orange'}}><strong>Требуется оплата</strong></small>
+    }
+  };
   
   render() {
-    const { users, pin, showQr, error, success } = this.state;
+    const { users, pin, showQr, error, success, isMember } = this.state;
+
+    console.log("isMember: ", this.state.isMember);
 
     if (false && !users) {
       return (<div>Загружается...</div>);
     }
     const p = pin && Number(pin.replace(/ /g,""));
-    console.log(p, p && p.length);
 
     return (
       <Paper style={{padding: '60px 40px', maxWidth: '600px', margin: '0 auto', }} >
@@ -87,13 +105,20 @@ class ViewUsers extends Component {
           { showQr ? 'Остановить считывание' : 'Считать QR-код' } 
         </Button>
         {
-          showQr && <QrReader />
+          showQr && <QrReader successHandler={this.successHandler}/>
         }
-        <p>
-          <small>или</small>
-        </p>
         { error && <div className="error">{ error }</div> }
         { success && <div className="success">{ success }</div> }
+        {
+          success && this.showIsMember(isMember)
+        }
+        <br/>
+        <br/>
+        <br/>
+        <hr/>
+        <p>
+          <small>или если код не считывается</small>
+        </p>
         <form onSubmit={this.submitPin}>
           <PinInput 
             required id="speciality" label="Введите пин гостя"

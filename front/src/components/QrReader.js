@@ -24,10 +24,13 @@ const styles = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    width: '70vmin',
-    height: '70vmin',
+    width: '200px',
+    height: '200px',
     transform: 'translateX(-50%) translateY(-50%)',
     textAlign: 'center',
+    border: '2px solid crimson',
+    background: '#000',
+    opacity: '0.2',
   },
   snapshot: {
     display: 'none',
@@ -50,7 +53,6 @@ class QrReader extends React.Component {
   }
 
   componentWillUnmount(){
-    console.log(">>>", this.timer);
     clearTimeout(this.timer);
     this.stopStream();
   }
@@ -62,10 +64,8 @@ class QrReader extends React.Component {
       alert('Sorry, your browser is not compatible with this app.');
       alert(navigator.mediaDevices);
     }
-    console.log("Init Success", this.snapshotCanvas);
     this.initVideoStream();
     this.snapshotContext = this.snapshotCanvas.getContext('2d');
-    console.log(">>>", this.snapshotContext);
     this.qrcodeWorker = new Worker("./js/qrcode_worker.js");
     this.qrcodeWorker.postMessage({cmd: 'init'});
     this.qrcodeWorker.addEventListener('message', this.showResult);
@@ -78,25 +78,8 @@ class QrReader extends React.Component {
       if (resultData !== false) {
           navigator.vibrate(200); // vibration is not supported on Edge, IE, Opera and Safari
         //disableUI();
-        console.warn("RESUULT", resultData);
-
-        //     try {
-        //         url = new URL(resultData);
-        //         let linkToResult = document.createElement('a');
-        //         linkToResult.href = url;
-        //         linkToResult.innerText = resultData;
-        //         resultContainer.appendChild(linkToResult);
-
-        //         resultSearchGo.href = url;
-        //         resultSearchGo.innerText = "Go";
-        //     } catch (e) {
-        //         resultContainer.innerText = resultData;
-
-        //         resultSearchGo.href = "https://www.google.com/search?q=" + encodeURIComponent(resultData);
-        //         resultSearchGo.innerText = "Search";
-        //     }
-
-        //     resultDialog.showModal();
+        console.warn("RESULT", resultData);
+        this.props.successHandler(resultData);
       } else {
           // if not found, retry
           this.scanCode();
@@ -139,7 +122,6 @@ class QrReader extends React.Component {
         );
         
         // scan for QRCode
-        console.error("SCAN:", imageData);
         this.qrcodeWorker.postMessage({
           cmd: 'process',
           width: this.snapshotSquare.size,
@@ -162,11 +144,8 @@ class QrReader extends React.Component {
       this.stopStream();
 
     navigator.mediaDevices.getUserMedia(config).then(stream => {
-      console.warn("!!!!", this);
       this.video.srcObject = stream;
       this.video.oncanplay = () => {
-          console.warn("WORK", this);
-          //flipCameraButton.disabled = false;
           this.calculateSquare();
           this.scanCode();
         };

@@ -4,6 +4,7 @@ namespace ConfBooker;
 class GuestStatus {
   public $status;
   public $name;
+  public $isMember;
 
   function getStatus() {
     return $this->status;
@@ -11,6 +12,10 @@ class GuestStatus {
 
   function getName() {
     return $this->name;
+  }
+
+  function getIsMember() {
+    return $this->isMember;
   }
 }
 
@@ -33,6 +38,7 @@ class Mutations {
       $guest->save();
       $s->status = "ok";
       $s->name = $res->getFullname();
+      $s->isMember = $res->getIsMember();
     } else {
       $s->status = 'not found';
     }

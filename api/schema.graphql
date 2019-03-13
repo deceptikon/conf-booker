@@ -15,6 +15,7 @@ type Mutation {
 type guestStatus {
   status: String
   name: String
+  isMember: Boolean
 }
 
 type User {
